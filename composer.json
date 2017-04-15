@@ -1,0 +1,19 @@
+{
+    "name": "kolyunya/codeception-w3c-validator",
+    "authors": [
+        {
+            "name": "Kolyunya",
+            "email": "oleynikovny@mail.ru"
+        }
+    ],
+    "require": {
+        "codeception/codeception": "^2.0.0"
+    },
+    "autoload":
+    {
+        "psr-4":
+        {
+            "kolyunya\\": "sources"
+        }
+    }
+}
