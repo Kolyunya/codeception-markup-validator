@@ -11,6 +11,10 @@ use GuzzleHttp\Client;
 /**
  * A module which validates current page markup via the W3C Markup Validation Service.
  * Requires either the `PhpBrowser` or the `WebDriver` module.
+ *
+ * Configuration options:
+ *  - ignoreWarnings
+ *  - ignoredErrors
  */
 class MarkupValidator extends \Codeception\Module
 {
@@ -21,9 +25,11 @@ class MarkupValidator extends \Codeception\Module
     /**
      * Validates current page markup via the W3C Markup Validation Service.
      *
-     * @param bool $ignoreWarnings Whether to ignore warnings or not.
+     * @param bool|null $ignoreWarnings Whether to ignore warnings or not.
+     * If `null`, module-wide value is used. If module-wide value is `null` too
+     * then warnings are not ignored by default.
      */
-    public function validateMarkup($ignoreWarnings = false)
+    public function validateMarkup($ignoreWarnings = null)
     {
         $markup = $this->getCurrentPageMarkup();
         $validationData = $this->sendMarkupValidationRequest($markup);
@@ -90,7 +96,7 @@ class MarkupValidator extends \Codeception\Module
      * Processes a document markup validation message.
      *
      * @param stdClass $message Markup validation message.
-     * @param bool $ignoreWarnings Whether to ignore warnings or not.
+     * @param bool|null $ignoreWarnings Whether to ignore warnings or not.
      */
     protected function processMarkupValidationMessage(stdClass $message, $ignoreWarnings)
     {
@@ -100,7 +106,7 @@ class MarkupValidator extends \Codeception\Module
                     ? $message->extract
                     : 'unavailable';
         if ($type === 'error' ||
-            $type === 'warning' && !$ignoreWarnings
+            $type === 'warning' && !$this->getIgnoreWarnings($ignoreWarnings)
         ) {
             $errorIsIgnored = $this->getErrorIsIgnored($summary);
             if (!$errorIsIgnored) {
@@ -120,6 +126,28 @@ class MarkupValidator extends \Codeception\Module
         $template = 'Markup validation error. %s. Details: %s';
         $message = sprintf($template, $summary, $details);
         $this->fail($message);
+    }
+
+    /**
+     * Returns an actual value of the `ignoreWarnings` parameter.
+     * If local value is `null`, module-wide value is used.
+     * If module-wide value is `null` too then warnings are not ignored by default.
+     * @param bool|null $ignoreWarnings A local value of the `ignoreWarnings` parameter.
+     */
+    private function getIgnoreWarnings($ignoreWarnings)
+    {
+        if (is_bool($ignoreWarnings)) {
+            return $ignoreWarnings;
+        }
+
+        $ignoreWarningsConfigKey = 'ignoreWarnings';
+        if (isset($this->config[$ignoreWarningsConfigKey]) &&
+            is_bool($this->config[$ignoreWarningsConfigKey])
+        ) {
+            return $this->config[$ignoreWarningsConfigKey];
+        }
+
+        return false;
     }
 
     /**
