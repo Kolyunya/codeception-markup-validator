@@ -13,7 +13,7 @@
     {
         "psr-4":
         {
-            "kolyunya\\": "sources"
+            "Kolyunya\\": "sources"
         }
     }
 }
