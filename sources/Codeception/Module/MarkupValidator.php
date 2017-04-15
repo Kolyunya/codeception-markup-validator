@@ -79,6 +79,9 @@ class MarkupValidator extends \Codeception\Module
         ]);
         $responseContents = $reponse->getBody()->getContents();
         $responseData = json_decode($responseContents);
+        if ($responseData === null) {
+            throw new Exception('Unable to parse W3C Markup Validation Service response.');
+        }
 
         return $responseData;
     }
