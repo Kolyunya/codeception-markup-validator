@@ -102,7 +102,10 @@ class MarkupValidator extends \Codeception\Module
         if ($type === 'error' ||
             $type === 'warning' && !$ignoreWarnings
         ) {
-            $this->reportMarkupValidationError($summary, $details);
+            $errorIsIgnored = $this->getErrorIsIgnored($summary);
+            if (!$errorIsIgnored) {
+                $this->reportMarkupValidationError($summary, $details);
+            }
         }
     }
 
@@ -117,6 +120,32 @@ class MarkupValidator extends \Codeception\Module
         $template = 'Markup validation error. %s. Details: %s';
         $message = sprintf($template, $summary, $details);
         $this->fail($message);
+    }
+
+    /**
+     * Returns a boolean indicating whether an error is ignored or not.
+     *
+     * @param string $summary Error summary.
+     * @return boolean Whether an error is ignored or not.
+     */
+    private function getErrorIsIgnored($summary)
+    {
+        $ignoredErrorsConfigKey = 'ignoredErrors';
+        if (!isset($this->config[$ignoredErrorsConfigKey]) ||
+            !is_array($this->config[$ignoredErrorsConfigKey])
+        ) {
+            return false;
+        }
+
+        $ignoredErrors = $this->config[$ignoredErrorsConfigKey];
+        foreach ($ignoredErrors as $ignoredError) {
+            $erorIsIgnored = preg_match($ignoredError, $summary) === 1;
+            if ($erorIsIgnored) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
