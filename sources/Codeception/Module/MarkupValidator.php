@@ -4,7 +4,7 @@ namespace Kolyunya\Codeception\Module;
 
 use Exception;
 use stdClass;
-use Codeception\Lib\InnerBrowser;
+use Codeception\Module\PhpBrowser;
 use Codeception\Module\WebDriver;
 use GuzzleHttp\Client;
 
@@ -131,7 +131,7 @@ class MarkupValidator extends \Codeception\Module
             throw new Exception(sprintf('"%s" module is not enabled.'));
         }
 
-        /* @var $phpBrowser InnerBrowser */
+        /* @var $phpBrowser PhpBrowser */
         $phpBrowser = $this->getModule($moduleName);
         $markup = $phpBrowser->_getResponseContent();
 
