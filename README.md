@@ -6,4 +6,4 @@
 [![Latest Stable Version](https://poser.pugx.org/kolyunya/codeception-markup-validator/v/stable)](https://packagist.org/packages/kolyunya/codeception-markup-validator)
 
 ## Description
-Markup validation module for Codeception.
+Markup validator module for Codeception.
