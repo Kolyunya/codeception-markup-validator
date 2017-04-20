@@ -4,6 +4,7 @@ namespace Kolyunya\Codeception\Module;
 
 use Exception;
 use stdClass;
+use Codeception\Module;
 use Codeception\Module\PhpBrowser;
 use Codeception\Module\WebDriver;
 use GuzzleHttp\Client;
@@ -16,7 +17,7 @@ use GuzzleHttp\Client;
  *  - ignoreWarnings
  *  - ignoredErrors
  */
-class MarkupValidator extends \Codeception\Module
+class MarkupValidator extends Module
 {
     const W3C_MARKUP_VALIDATION_SERVICE_BASE_URI = 'https://validator.w3.org';
 
@@ -185,7 +186,7 @@ class MarkupValidator extends \Codeception\Module
     {
         $moduleName = 'PhpBrowser';
         if (!$this->hasModule($moduleName)) {
-            throw new Exception(sprintf('"%s" module is not enabled.'));
+            throw new Exception(sprintf('"%s" module is not enabled.', $moduleName));
         }
 
         /* @var $phpBrowser PhpBrowser */
@@ -204,7 +205,7 @@ class MarkupValidator extends \Codeception\Module
     {
         $moduleName = 'WebDriver';
         if (!$this->hasModule($moduleName)) {
-            throw new Exception(sprintf('"%s" module is not enabled.'));
+            throw new Exception(sprintf('"%s" module is not enabled.', $moduleName));
         }
 
         /* @var $webDriver WebDriver */

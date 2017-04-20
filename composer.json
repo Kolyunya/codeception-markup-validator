@@ -1,19 +1,37 @@
 {
-    "name": "kolyunya/codeception-w3c-validator",
+    "name": "kolyunya/codeception-markup-validator",
+    "description": "Markup validator module for Codeception.",
+    "license": "GNU GPL v3.0",
+    "type": "library",
+    "keywords": [
+        "acceptance-testing",
+        "codeception",
+        "codeception-module",
+        "html-validator",
+        "markup-validator",
+        "w3c-validator"
+    ],
+    "homepage": "https://github.com/Kolyunya/codeception-markup-validator",
     "authors": [
         {
             "name": "Kolyunya",
-            "email": "oleynikovny@mail.ru"
+            "email": "oleynikovny@mail.ru",
+            "homepage": "http://github.com/Kolyunya"
         }
     ],
+    "minimal-stability": "stable",
     "require": {
-        "codeception/codeception": "^2.0.0"
+        "php": ">=5.4 <8.0",
+        "codeception/codeception": "^2.2.10"
     },
-    "autoload":
-    {
-        "psr-4":
-        {
-            "Kolyunya\\": "sources"
+    "require-dev": {
+        "phpunit/phpunit": ">=4.8 <7.0",
+        "squizlabs/php_codesniffer": ">=2.8 <3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kolyunya\\Codeception\\": "sources",
+            "Kolyunya\\Codeception\\Tests\\": "tests"
         }
     }
 }
