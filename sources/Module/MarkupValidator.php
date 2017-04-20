@@ -19,7 +19,7 @@ use GuzzleHttp\Client;
  */
 class MarkupValidator extends Module
 {
-    const W3C_MARKUP_VALIDATION_SERVICE_BASE_URI = 'https://validator.w3.org';
+    const W3C_MARKUP_VALIDATION_SERVICE_BASE_URI = 'https://validator.w3.org/';
 
     const W3C_MARKUP_VALIDATION_SERVICE_ENDPOINT = '/nu/';
 
@@ -107,7 +107,7 @@ class MarkupValidator extends Module
                     ? $message->extract
                     : 'unavailable';
         if ($type === 'error' ||
-            $type === 'warning' && !$this->getIgnoreWarnings($ignoreWarnings)
+            $type === 'info' && !$this->getIgnoreWarnings($ignoreWarnings)
         ) {
             $errorIsIgnored = $this->getErrorIsIgnored($summary);
             if (!$errorIsIgnored) {
