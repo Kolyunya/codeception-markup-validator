@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Kolyunya/Codeception/MarkupValidator">
+    <config name="encoding" value="utf-8"/>
+    <config name="error_severity" value="1"/>
+    <config name="warning_severity" value="1"/>
+    <rule ref="PSR2">
+    </rule>
+    <file>sources</file>
+    <file>tests</file>
+</ruleset>

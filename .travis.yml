@@ -1,0 +1,39 @@
+language: php
+matrix:
+  include:
+    -
+        php: 'hhvm'
+        env:
+            - ANALYZE=false
+    -
+        php: '5.4'
+        env:
+            - ANALYZE=false
+    -
+        php: '5.5'
+        env:
+            - ANALYZE=false
+    -
+        php: '5.6'
+        env:
+            - ANALYZE=false
+    -
+        php: '7.0'
+        env:
+            - ANALYZE=true
+    -
+        php: '7.1'
+        env:
+            - ANALYZE=true
+    -
+        php: 'nightly'
+        env:
+            - ANALYZE=true
+before_script:
+    - composer update
+script:
+    - vendor/bin/phpunit
+    - vendor/bin/phpcs
+    - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
+    - if [ "$ANALYZE" = "true" ]; then export PATH=~/.composer/vendor/bin:$PATH; fi;
+    - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources tests; fi;
