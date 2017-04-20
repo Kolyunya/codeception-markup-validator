@@ -72,10 +72,10 @@ class MarkupValidator extends Module
      */
     protected function sendMarkupValidationRequest($markup)
     {
-        $сlient = new Client([
+        $client = new Client([
             'base_uri' => self::W3C_MARKUP_VALIDATION_SERVICE_BASE_URI,
         ]);
-        $reponse = $сlient->post(self::W3C_MARKUP_VALIDATION_SERVICE_ENDPOINT, [
+        $reponse = $client->post(self::W3C_MARKUP_VALIDATION_SERVICE_ENDPOINT, [
             'headers' => [
                 'Content-Type' => 'text/html; charset=UTF-8;',
             ],
