@@ -1,0 +1,7 @@
+engines:
+    phpmd:
+        enabled: true
+        config:
+            rules:
+                LongVariable:
+                    maximum: 30
