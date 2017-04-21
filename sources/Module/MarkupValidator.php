@@ -33,10 +33,13 @@ class MarkupValidator extends Module
     public function validateMarkup($ignoreWarnings = null)
     {
         $markup = $this->getCurrentPageMarkup();
+
         $validationData = $this->sendMarkupValidationRequest($markup);
         foreach ($validationData->messages as $message) {
             $this->processMarkupValidationMessage($message, $ignoreWarnings);
         }
+
+        $this->assertTrue(true);
     }
 
     /**
