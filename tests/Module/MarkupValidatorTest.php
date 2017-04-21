@@ -28,6 +28,7 @@ class MarkupValidatorTest extends TestCase
             ->getMockBuilder('Kolyunya\Codeception\Module\MarkupValidator')
             ->setConstructorArgs(array($moduleContainer, array()))
             ->setMethods(array(
+                'assertTrue',
                 'getCurrentPageMarkup',
             ))
             ->getMock()
@@ -267,6 +268,12 @@ HTML
 
     private function assertValidMakup($ignoreWarnings = null)
     {
+        $this->module
+            ->expects($this->once())
+            ->method('assertTrue')
+            ->with($this->equalTo(true))
+        ;
+
         $this->module->validateMarkup($ignoreWarnings);
     }
 

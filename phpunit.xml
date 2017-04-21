@@ -4,7 +4,7 @@
     bootstrap="vendor/autoload.php"
 >
     <testsuites>
-        <testsuite name="Kolyunya/Codeception/MarkupValidator">
+        <testsuite name="kolyunya/codeception-markup-validator">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
