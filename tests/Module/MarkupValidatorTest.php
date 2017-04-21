@@ -3,11 +3,17 @@
 namespace Kolyunya\Codeception\Tests\Module;
 
 use Exception;
+use Codeception\Lib\ModuleContainer;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Module\MarkupValidator;
 
 class MarkupValidatorTest extends TestCase
 {
+    /**
+     * @var ModuleContainer
+     */
+    private $moduleContainer;
+
     /**
      * @var MarkupValidator
      */
@@ -18,19 +24,23 @@ class MarkupValidatorTest extends TestCase
      */
     public function setUp()
     {
-        $moduleContainer = $this
+        $this->moduleContainer = $this
             ->getMockBuilder('Codeception\Lib\ModuleContainer')
             ->disableOriginalConstructor()
+            ->setMethods(array(
+                'hasModule',
+                'getModule',
+            ))
             ->getMock()
         ;
 
         $this->module = $this
             ->getMockBuilder('Kolyunya\Codeception\Module\MarkupValidator')
-            ->setConstructorArgs(array($moduleContainer, array()))
-            ->setMethods(array(
-                'assertTrue',
-                'getCurrentPageMarkup',
+            ->setConstructorArgs(array(
+                $this->moduleContainer,
+                null,
             ))
+            ->enableProxyingToOriginalMethods()
             ->getMock()
         ;
     }
@@ -42,260 +52,98 @@ class MarkupValidatorTest extends TestCase
     {
     }
 
-    public function testValidateValidPage()
+    /**
+     * @dataProvider testValidateMarkupDataProvider
+     */
+    public function testValidateMarkup($markup, $valid)
     {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                        <title>
-                            A valid page.
-                        </title>
-                    </head>
-                </html>
-HTML
-        );
-
-        $this->assertValidMakup(false);
-    }
-
-    public function testValidateInvalidPageDoNotIgnoreErrors()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                    </head>
-                </html>
-HTML
-        );
-
-        $expectedError = '/Element “head” is missing a required instance of child element “title”/';
-        $this->assertInvalidMarkup($expectedError, false);
-    }
-
-    public function testValidateInvalidPageIgnoreErrors()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                    </head>
-                </html>
-HTML
-        );
-
-        $this->module->_reconfigure(array(
-            'ignoredErrors' => array(
-                '/Element “head” is missing a required instance of child element “title”/',
-            ),
-        ));
-
-        $this->assertValidMakup();
-    }
-
-    public function testValidateInvalidPageIgnoreMultipleErrors()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                    </head>
-                    <body>
-                        <form>
-                            <button role="button">
-                            </button>
-                        </form>
-                    </body>
-                </html>
-HTML
-        );
-
-        $this->module->_reconfigure(array(
-            'ignoredErrors' => array(
-                '/Element “head” is missing a required instance of child element “title”/',
-                '/The “button” role is unnecessary for element “button”/',
-            ),
-        ));
-
-        $this->assertValidMakup();
-    }
-
-    public function testValidatePageWithWarningsDoNotIgnoreWarnings()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                        <title>
-                            A page with a warning.
-                        </title>
-                    </head>
-                    <body>
-                        <form>
-                            <button role="button">
-                            </button>
-                        </form>
-                    </body>
-                </html>
-HTML
-        );
-
-        $expectedError = '/The “button” role is unnecessary for element “button”/';
-        $this->assertInvalidMarkup($expectedError, false);
-    }
-
-    public function testValidatePageWithWarningsIgnoreWarningsLocal()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                        <title>
-                            A page with a warning.
-                        </title>
-                    </head>
-                    <body>
-                        <form>
-                            <button role="button" type="submit">
-                            </button>
-                        </form>
-                    </body>
-                </html>
-HTML
-        );
-
-        $this->assertValidMakup(true);
-    }
-
-    public function testValidatePageWithWarningsIgnoreWarningsModuleWide()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                        <title>
-                            A page with a warning.
-                        </title>
-                    </head>
-                    <body>
-                        <form>
-                            <button role="button" type="submit">
-                            </button>
-                        </form>
-                    </body>
-                </html>
-HTML
-        );
-
-        $this->module->_reconfigure(array(
-            'ignoreWarnings' => true,
-        ));
-
-        $this->assertValidMakup();
-    }
-
-    public function testValidatePageWithWarningsIgnoreWarningsLocalOverrideModuleWideFalse()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                        <title>
-                            A page with a warning.
-                        </title>
-                    </head>
-                    <body>
-                        <form>
-                            <button role="button" type="submit">
-                            </button>
-                        </form>
-                    </body>
-                </html>
-HTML
-        );
-
-        $this->module->_reconfigure(array(
-            'ignoreWarnings' => false,
-        ));
-
-        $this->assertValidMakup(true);
-    }
-
-    public function testValidatePageWithWarningsIgnoreWarningsLocalOverrideModuleWideTrue()
-    {
-        $this->mockGetCurrentPageMarkup(
-            <<<HTML
-                <!DOCTYPE HTML>
-                <html>
-                    <head>
-                        <title>
-                            A page with a warning.
-                        </title>
-                    </head>
-                    <body>
-                        <form>
-                            <button role="button" type="submit">
-                            </button>
-                        </form>
-                    </body>
-                </html>
-HTML
-        );
-
-        $this->module->_reconfigure(array(
-            'ignoreWarnings' => true,
-        ));
-
-        $this->assertInvalidMarkup('/The “button” role is unnecessary for element “button”/', false);
-    }
-
-    private function mockGetCurrentPageMarkup($markup)
-    {
-        $this->module
-            ->method('getCurrentPageMarkup')
+        $phpBrowser = $this
+            ->getMockBuilder('Codeception\Module\PhpBrowser')
+            ->disableOriginalConstructor()
+            ->setMethods(array(
+                '_getResponseContent',
+            ))
+            ->getMock()
+        ;
+        $phpBrowser
+            ->method('_getResponseContent')
             ->will($this->returnValue($markup))
         ;
-    }
 
-    private function assertValidMakup($ignoreWarnings = null)
-    {
-        $this->module
-            ->expects($this->once())
-            ->method('assertTrue')
-            ->with($this->equalTo(true))
+        $this->moduleContainer
+            ->method('hasModule')
+            ->will($this->returnValueMap(array(
+                array('PhpBrowser', true),
+            )))
+        ;
+        $this->moduleContainer
+            ->method('getModule')
+            ->will($this->returnValueMap(array(
+                array('PhpBrowser', $phpBrowser),
+            )))
         ;
 
-        $this->module->validateMarkup($ignoreWarnings);
-    }
-
-    private function assertInvalidMarkup($expectedError = null, $ignoreWarnings = null)
-    {
-        $errorReported = false;
+        if ($valid === true) {
+            $this->module->validateMarkup($markup);
+            $this->assertTrue(true);
+            return;
+        }
 
         try {
-            $this->module->validateMarkup($ignoreWarnings);
+            $this->module->validateMarkup($markup);
         } catch (Exception $exception) {
-            if ($expectedError !== null) {
-                $actualError = $exception->getMessage();
-                $errorsMatch = preg_match($expectedError, $actualError) === 1;
-                if (!$errorsMatch) {
-                    $this->fail('Expected error was not reported.');
-                }
-            }
-            $errorReported = true;
+            $this->assertTrue(true);
+            return;
         }
 
-        if (!$errorReported) {
-            $this->fail('No errors were reported.');
-        }
+        $this->assertTrue(false);
+    }
+
+    public function testValidateMarkupDataProvider()
+    {
+        return array(
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                            <title>
+                                A valid page.
+                            </title>
+                        </head>
+                    </html>
+HTML
+                ,
+                true,
+            ),
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                        </head>
+                    </html>
+HTML
+                ,
+                false,
+            ),
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                        </head>
+                        <body>
+                            <form>
+                                <button role="button">
+                                </button>
+                            </form>
+                        </body>
+                    </html>
+HTML
+                ,
+                false,
+            ),
+        );
     }
 }
