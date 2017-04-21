@@ -24,6 +24,14 @@ class MarkupValidator extends Module
     const W3C_MARKUP_VALIDATION_SERVICE_ENDPOINT = '/nu/';
 
     /**
+     * {@inheritDoc}
+     */
+    protected $config = [
+        'ignoreWarnings' => false,
+        'ignoredErrors' => [],
+    ];
+
+    /**
      * Validates current page markup via the W3C Markup Validation Service.
      *
      * @param bool|null $ignoreWarnings Whether to ignore warnings or not.
@@ -110,9 +118,9 @@ class MarkupValidator extends Module
                     ? $message->extract
                     : 'unavailable';
         if ($type === 'error' ||
-            $type === 'info' && !$this->getIgnoreWarnings($ignoreWarnings)
+            $type === 'info' && !$this->ignoreWarnings($ignoreWarnings)
         ) {
-            $errorIsIgnored = $this->getErrorIsIgnored($summary);
+            $errorIsIgnored = $this->ignoreError($summary);
             if (!$errorIsIgnored) {
                 $this->reportMarkupValidationError($summary, $details);
             }
@@ -134,24 +142,20 @@ class MarkupValidator extends Module
 
     /**
      * Returns an actual value of the `ignoreWarnings` parameter.
-     * If local value is `null`, module-wide value is used.
-     * If module-wide value is `null` too then warnings are not ignored by default.
+     *
+     * If local value is `null`, module-wide value (`false`) is used.
      * @param bool|null $ignoreWarnings A local value of the `ignoreWarnings` parameter.
      */
-    private function getIgnoreWarnings($ignoreWarnings)
+    private function ignoreWarnings($ignoreWarnings)
     {
         if (is_bool($ignoreWarnings)) {
             return $ignoreWarnings;
         }
 
-        $ignoreWarningsConfigKey = 'ignoreWarnings';
-        if (isset($this->config[$ignoreWarningsConfigKey]) &&
-            is_bool($this->config[$ignoreWarningsConfigKey])
-        ) {
-            return $this->config[$ignoreWarningsConfigKey];
-        }
+        // Fall back to a module-wide configuration.
+        $ignoreWarnings = $this->config['ignoreWarnings'];
 
-        return false;
+        return $ignoreWarnings;
     }
 
     /**
@@ -160,16 +164,9 @@ class MarkupValidator extends Module
      * @param string $summary Error summary.
      * @return boolean Whether an error is ignored or not.
      */
-    private function getErrorIsIgnored($summary)
+    private function ignoreError($summary)
     {
-        $ignoredErrorsConfigKey = 'ignoredErrors';
-        if (!isset($this->config[$ignoredErrorsConfigKey]) ||
-            !is_array($this->config[$ignoredErrorsConfigKey])
-        ) {
-            return false;
-        }
-
-        $ignoredErrors = $this->config[$ignoredErrorsConfigKey];
+        $ignoredErrors = $this->config['ignoredErrors'];
         foreach ($ignoredErrors as $ignoredError) {
             $erorIsIgnored = preg_match($ignoredError, $summary) === 1;
             if ($erorIsIgnored) {
