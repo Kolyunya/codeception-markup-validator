@@ -85,6 +85,18 @@ class MarkupValidatorTest extends TestCase
         ));
     }
 
+    public function testInvalidComponentConfig()
+    {
+        $this->setExpectedException('Exception', 'Invalid configuration of component «reporter».');
+
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'reporter' => array(
+                'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
+                'config' => 'configuration-parameter',
+            ),
+        ));
+    }
+
     /**
      * @dataProvider testValidateMarkupDataProvider
      */
