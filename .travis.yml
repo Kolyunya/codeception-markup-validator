@@ -35,10 +35,10 @@ matrix:
 before_script:
     - composer update
 script:
+    - vendor/bin/phpunit
     - vendor/bin/phpcs
-    - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
     - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
     - if [ "$ANALYZE" = "true" ]; then export PATH=~/.composer/vendor/bin:$PATH; fi;
     - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources tests; fi;
 after_success:
-    - vendor/bin/coveralls
+    - travis_retry vendor/bin/coveralls
