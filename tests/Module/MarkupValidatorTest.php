@@ -85,6 +85,17 @@ class MarkupValidatorTest extends TestCase
         ));
     }
 
+    public function testInvalidComponentClass()
+    {
+        $this->setExpectedException('Exception', 'Invalid class configuration of component «reporter».');
+
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'reporter' => array(
+                'class' => false,
+            ),
+        ));
+    }
+
     public function testInvalidComponentConfig()
     {
         $this->setExpectedException('Exception', 'Invalid configuration of component «reporter».');
