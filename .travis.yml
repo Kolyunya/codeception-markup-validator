@@ -42,4 +42,3 @@ script:
     - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources tests; fi;
 after_success:
     - vendor/bin/coveralls
-    - vendor/bin/test-reporter
