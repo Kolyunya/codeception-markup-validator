@@ -59,7 +59,6 @@ class MarkupValidatorTest extends TestCase
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'provider' => array(
                 'class' => 'stdClass',
-                'config' => array(),
             ),
         ));
     }
@@ -71,7 +70,6 @@ class MarkupValidatorTest extends TestCase
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'validator' => array(
                 'class' => 'stdClass',
-                'config' => array(),
             ),
         ));
     }
@@ -83,7 +81,6 @@ class MarkupValidatorTest extends TestCase
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'reporter' => array(
                 'class' => 'stdClass',
-                'config' => array(),
             ),
         ));
     }
@@ -93,31 +90,7 @@ class MarkupValidatorTest extends TestCase
      */
     public function testValidateMarkup($markup, $valid)
     {
-        $phpBrowser = $this
-            ->getMockBuilder('Codeception\Module\PhpBrowser')
-            ->disableOriginalConstructor()
-            ->setMethods(array(
-                '_getResponseContent',
-            ))
-            ->getMock()
-        ;
-        $phpBrowser
-            ->method('_getResponseContent')
-            ->will($this->returnValue($markup))
-        ;
-
-        $this->moduleContainer
-            ->method('hasModule')
-            ->will($this->returnValueMap(array(
-                array('PhpBrowser', true),
-            )))
-        ;
-        $this->moduleContainer
-            ->method('getModule')
-            ->will($this->returnValueMap(array(
-                array('PhpBrowser', $phpBrowser),
-            )))
-        ;
+        $this->mockMarkup($markup);
 
         if ($valid === true) {
             $this->module->validateMarkup($markup);
@@ -180,6 +153,55 @@ HTML
                 ,
                 false,
             ),
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                            <title>
+                                A page with a warning.
+                            </title>
+                        </head>
+                        <body>
+                            <form>
+                                <button role="button">
+                                </button>
+                            </form>
+                        </body>
+                    </html>
+HTML
+                ,
+                false,
+            ),
         );
+    }
+
+    private function mockMarkup($markup)
+    {
+        $phpBrowser = $this
+            ->getMockBuilder('Codeception\Module\PhpBrowser')
+            ->disableOriginalConstructor()
+            ->setMethods(array(
+                '_getResponseContent',
+            ))
+            ->getMock()
+        ;
+        $phpBrowser
+            ->method('_getResponseContent')
+            ->will($this->returnValue($markup))
+        ;
+
+        $this->moduleContainer
+            ->method('hasModule')
+            ->will($this->returnValueMap(array(
+                array('PhpBrowser', true),
+            )))
+        ;
+        $this->moduleContainer
+            ->method('getModule')
+            ->will($this->returnValueMap(array(
+                array('PhpBrowser', $phpBrowser),
+            )))
+        ;
     }
 }

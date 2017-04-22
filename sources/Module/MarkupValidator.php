@@ -89,17 +89,12 @@ class MarkupValidator extends Module
      */
     private function initializeProvider()
     {
-        $name = 'provider';
-        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface';
-        $componentClass = $this->config[$name]['class'];
-        $componentConfig = $this->config[$name]['config'];
-        $component = new $componentClass($this->moduleContainer, $componentConfig);
-        if (($component instanceof $interface) === false) {
-            $errorMessage = sprintf('Invalid class «%s» provided for component «%s».', $componentClass, $name);
-            throw new Exception($errorMessage);
-        }
-
-        $this->provider = $component;
+        $providerName = 'provider';
+        $providerClass = $this->getComponentClass($providerName);
+        $providerConfig = $this->getComponentConfig($providerName);
+        $this->provider = new $providerClass($this->moduleContainer, $providerConfig);
+        $providerInterface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface';
+        $this->validateComponentInstance($this->provider, $providerInterface, $providerName);
     }
 
     /**
@@ -107,10 +102,12 @@ class MarkupValidator extends Module
      */
     private function initializeValidator()
     {
-        $this->validator = $this->makeComponent(
-            'validator',
-            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface'
-        );
+        $validatorName = 'validator';
+        $validatorClass = $this->getComponentClass($validatorName);
+        $validatorConfig = $this->getComponentConfig($validatorName);
+        $this->validator = new $validatorClass($validatorConfig);
+        $validatorInterface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface';
+        $this->validateComponentInstance($this->validator, $validatorInterface, $validatorName);
     }
 
     /**
@@ -118,30 +115,75 @@ class MarkupValidator extends Module
      */
     private function initializeReporter()
     {
-        $this->reporter = $this->makeComponent(
-            'reporter',
-            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface'
-        );
+        $reporterName = 'reporter';
+        $reporterClass = $this->getComponentClass($reporterName);
+        $reporterConfig = $this->getComponentConfig($reporterName);
+        $this->reporter = new $reporterClass($reporterConfig);
+        $reporterInterface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface';
+        $this->validateComponentInstance($this->reporter, $reporterInterface, $reporterName);
     }
 
     /**
-     * Constructs a validator component.
+     * Returns component class name.
      *
-     * @param string $name Component name.
-     * @param string $interface Component interface.
+     * @param string $componentName Component name.
      *
-     * @return object Component instance.
+     * @return string Component class name.
      */
-    private function makeComponent($name, $interface)
+    private function getComponentClass($componentName)
     {
-        $componentClass = $this->config[$name]['class'];
-        $componentConfig = $this->config[$name]['config'];
-        $component = new $componentClass($componentConfig);
-        if (($component instanceof $interface) === false) {
-            $errorMessage = sprintf('Invalid class «%s» provided for component «%s».', $componentClass, $name);
+        $componentClassKey = 'class';
+        if (isset($this->config[$componentName][$componentClassKey]) === false ||
+            is_string($this->config[$componentName][$componentClassKey]) === false
+        ) {
+            $errorMessage = sprintf('Invalid class configuration of component «%s».', $componentName);
             throw new Exception($errorMessage);
         }
 
-        return $component;
+        $componentClass = $this->config[$componentName][$componentClassKey];
+
+        return $componentClass;
+    }
+
+    /**
+     * Returns component configuration parameters.
+     *
+     * @param string $componentName Component name.
+     *
+     * @return string Component configuration parameters.
+     */
+    private function getComponentConfig($componentName)
+    {
+        $componentConfig = array();
+
+        $componentConfigKey = 'config';
+        if (isset($this->config[$componentName][$componentConfigKey]) === true &&
+            is_array($this->config[$componentName][$componentConfigKey]) === true
+        ) {
+            $componentConfig = $this->config[$componentName][$componentConfigKey];
+        }
+
+        return $componentConfig;
+    }
+
+    /**
+     * Ensures that a component is an instance of a specifi interface.
+     *
+     * @param object $component Component instance to validate.
+     * @param string $interface Interface to validate component instance against.
+     * @param string $componentName Component name. User for error logging.
+     *
+     * @throws Exception When `component` is not an instance of the `interface`.
+     */
+    private function validateComponentInstance($component, $interface, $componentName)
+    {
+        if (($component instanceof $interface) === false) {
+            $componentClass = get_class($component);
+            $errorMessage = vsprintf('Invalid class «%s» provided for component «%s».', array(
+                $componentClass,
+                $componentName,
+            ));
+            throw new Exception($errorMessage);
+        }
     }
 }
