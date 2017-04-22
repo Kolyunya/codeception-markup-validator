@@ -24,7 +24,7 @@ modules:
     enabled:
         - PhpBrowser:
             url: 'http://localhost/'
-        - 'Kolyunya\Codeception\Module\MarkupValidator'
+        - Kolyunya\Codeception\Module\MarkupValidator
 ```
 
 Use it in your acceptance tests like this:
@@ -51,10 +51,9 @@ modules:
     enabled:
         - PhpBrowser:
             url: 'http://localhost/'
-        - MarkupValidator:
-            class: 'Kolyunya\Codeception\Module\MarkupValidator'
+        - Kolyunya\Codeception\Module\MarkupValidator:
             reporter:
-                class: 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter'
+                class: Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter
                 config:
                     ignoreWarnings: true
                     ignoredErrors:
