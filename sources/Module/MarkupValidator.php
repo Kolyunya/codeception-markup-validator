@@ -157,10 +157,13 @@ class MarkupValidator extends Module
         $componentConfig = array();
 
         $componentConfigKey = 'config';
-        if (isset($this->config[$componentName][$componentConfigKey]) === true &&
-            is_array($this->config[$componentName][$componentConfigKey]) === true
-        ) {
-            $componentConfig = $this->config[$componentName][$componentConfigKey];
+        if (isset($this->config[$componentName][$componentConfigKey]) === true) {
+            if (is_array($this->config[$componentName][$componentConfigKey]) === true) {
+                $componentConfig = $this->config[$componentName][$componentConfigKey];
+            } else {
+                $errorMessage = sprintf('Invalid configuration of component «%s».', $componentName);
+                throw new Exception($errorMessage);
+            }
         }
 
         return $componentConfig;
