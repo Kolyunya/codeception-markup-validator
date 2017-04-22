@@ -95,7 +95,7 @@ class MarkupValidator extends Module
         $componentConfig = $this->config[$name]['config'];
         $component = new $componentClass($this->moduleContainer, $componentConfig);
         if (($component instanceof $interface) === false) {
-            $errorMessage = sprintf('Invalid component class provided: «%s».', $componentClass);
+            $errorMessage = sprintf('Invalid class «%s» provided for component «%s».', $componentClass, $name);
             throw new Exception($errorMessage);
         }
 
@@ -138,7 +138,7 @@ class MarkupValidator extends Module
         $componentConfig = $this->config[$name]['config'];
         $component = new $componentClass($componentConfig);
         if (($component instanceof $interface) === false) {
-            $errorMessage = sprintf('Invalid component class provided: «%s».', $componentClass);
+            $errorMessage = sprintf('Invalid class «%s» provided for component «%s».', $componentClass, $name);
             throw new Exception($errorMessage);
         }
 

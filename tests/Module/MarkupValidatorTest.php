@@ -52,6 +52,42 @@ class MarkupValidatorTest extends TestCase
     {
     }
 
+    public function testInvalidProvider()
+    {
+        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «provider».');
+
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'provider' => array(
+                'class' => 'stdClass',
+                'config' => array(),
+            ),
+        ));
+    }
+
+    public function testInvalidValidator()
+    {
+        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «validator».');
+
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'validator' => array(
+                'class' => 'stdClass',
+                'config' => array(),
+            ),
+        ));
+    }
+
+    public function testInvalidReporter()
+    {
+        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «reporter».');
+
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'reporter' => array(
+                'class' => 'stdClass',
+                'config' => array(),
+            ),
+        ));
+    }
+
     /**
      * @dataProvider testValidateMarkupDataProvider
      */
