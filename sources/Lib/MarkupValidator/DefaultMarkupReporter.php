@@ -19,21 +19,19 @@ class DefaultMarkupReporter implements MarkupReporterInterface
     /**
      * Configuration parameters.
      *
-     *  array(
-     *      'ignoreWarnings' => false,
-     *      'ignoredErrors' => array(),
-     *  )
-     *
      * @var array
      */
-    private $config;
+    private $config = array(
+        'ignoreWarnings' => false,
+        'ignoredErrors' => array(),
+    );
 
     /**
      * {@inheritDoc}
      */
     public function __construct(array $config = array())
     {
-        $this->config = $config;
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
@@ -59,23 +57,8 @@ class DefaultMarkupReporter implements MarkupReporterInterface
             return;
         }
 
-        $this->reportError(
-            $message->getSummary(),
-            $message->getDetails()
-        );
-    }
-
-    /**
-     * Reports a markup validation error.
-     *
-     * @param string $summary Markup validation error summary.
-     * @param string $details Markup validation error details.
-     */
-    private function reportError($summary, $details)
-    {
-        $template = 'Markup validation error. %s. Details: %s';
-        $message = sprintf($template, $summary, $details);
-        $this->fail($message);
+        $messageString = $message->__toString();
+        $this->fail($messageString);
     }
 
     /**

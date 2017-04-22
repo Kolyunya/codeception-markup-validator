@@ -22,7 +22,7 @@
     "minimal-stability": "stable",
     "require": {
         "php": ">=5.4 <8.0",
-        "codeception/codeception": "^2.2.10"
+        "codeception/codeception": "^2.0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",

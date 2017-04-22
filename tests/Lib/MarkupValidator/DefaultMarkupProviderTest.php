@@ -37,23 +37,6 @@ class DefaultMarkupProviderTest extends TestCase
             ->getMockBuilder('Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider')
             ->setConstructorArgs(array(
                 $this->moduleContainer,
-                array(
-                    'provider' => array(
-                        'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
-                        'config' => array(),
-                    ),
-                    'validator' => array(
-                        'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
-                        'config' => array(),
-                    ),
-                    'reporter' => array(
-                        'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
-                        'config' => array(
-                            'ignoredErrors' => array(),
-                            'ignoreWarnings' => false,
-                        ),
-                    ),
-                ),
             ))
             ->enableProxyingToOriginalMethods()
             ->getMock()
