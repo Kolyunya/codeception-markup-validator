@@ -3,215 +3,145 @@
 namespace Kolyunya\Codeception\Module;
 
 use Exception;
-use stdClass;
+use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
-use Codeception\Module\PhpBrowser;
-use Codeception\Module\WebDriver;
-use GuzzleHttp\Client;
+use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
+use Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface;
+use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
 
 /**
- * A module which validates current page markup via the W3C Markup Validation Service.
- * Requires either the `PhpBrowser` or the `WebDriver` module.
- *
- * Configuration options:
- *  - ignoreWarnings
- *  - ignoredErrors
+ * A module which validates page markup via a markup validator.
  */
 class MarkupValidator extends Module
 {
-    const W3C_MARKUP_VALIDATION_SERVICE_BASE_URI = 'https://validator.w3.org/';
+    /**
+     * {@inheritDoc}
+     */
+    protected $config = array(
+        'provider' => array(
+            'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
+            'config' => array(),
+        ),
+        'validator' => array(
+            'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
+            'config' => array(),
+        ),
+        'reporter' => array(
+            'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
+            'config' => array(
+                'ignoredErrors' => array(),
+                'ignoreWarnings' => false,
+            ),
+        ),
+    );
 
-    const W3C_MARKUP_VALIDATION_SERVICE_ENDPOINT = '/nu/';
+    /**
+     * Markup provider.
+     *
+     * @var MarkupProviderInterface
+     */
+    private $provider;
+
+    /**
+     * Markup validator.
+     *
+     * @var MarkupValidatorInterface
+     */
+    private $validator;
+
+    /**
+     * Markup validation message reporter.
+     *
+     * @var MarkupReporterInterface
+     */
+    private $reporter;
 
     /**
      * {@inheritDoc}
      */
-    protected $config = [
-        'ignoreWarnings' => false,
-        'ignoredErrors' => [],
-    ];
+    public function __construct(ModuleContainer $moduleContainer, $config = null)
+    {
+        parent::__construct($moduleContainer, $config);
+
+        $this->initializeProvider();
+        $this->initializeValidator();
+        $this->initializeReporter();
+    }
 
     /**
-     * Validates current page markup via the W3C Markup Validation Service.
-     *
-     * @param bool|null $ignoreWarnings Whether to ignore warnings or not.
-     * If `null`, module-wide value is used. If module-wide value is `null` too
-     * then warnings are not ignored by default.
+     * Validates page markup via a markup validator.
      */
-    public function validateMarkup($ignoreWarnings = null)
+    public function validateMarkup()
     {
-        $markup = $this->getCurrentPageMarkup();
+        $markup = $this->provider->getMarkup();
 
-        $validationData = $this->sendMarkupValidationRequest($markup);
-        foreach ($validationData->messages as $message) {
-            $this->processMarkupValidationMessage($message, $ignoreWarnings);
+        $messages = $this->validator->validate($markup);
+        foreach ($messages as $message) {
+            $this->reporter->report($message);
         }
 
+        // Validation succeeded.
         $this->assertTrue(true);
     }
 
     /**
-     * Returns current page markup.
-     *
-     * @return string Current page markup.
+     * Initializes markup provider.
      */
-    protected function getCurrentPageMarkup()
+    private function initializeProvider()
     {
-        try {
-            $markup = $this->getMarkupFromPhpBrowser();
-            return $markup;
-        } catch (Exception $exception) {
-            // Wasn't able to get markup from the PhpBrowser.
+        $name = 'provider';
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface';
+        $componentClass = $this->config[$name]['class'];
+        $componentConfig = $this->config[$name]['config'];
+        $component = new $componentClass($this->moduleContainer, $componentConfig);
+        if (($component instanceof $interface) === false) {
+            $errorMessage = sprintf('Invalid component class provided: «%s».', $componentClass);
+            throw new Exception($errorMessage);
         }
 
-        try {
-            $markup = $this->getMarkupFromWebDriver();
-            return $markup;
-        } catch (Exception $exception) {
-            // Wasn't able to get markup from the WebDriver.
-        }
-
-        throw new Exception('Unable to obtain current page markup.');
+        $this->provider = $component;
     }
 
     /**
-     * Send a markup validation request to the W3C Markup Validation Service
-     * and returns response data.
-     *
-     * @param string $markup Page markup to validate.
-     * @return stdClass W3C Markup Validation Service response data.
+     * Initializes markup validator.
      */
-    protected function sendMarkupValidationRequest($markup)
+    private function initializeValidator()
     {
-        $client = new Client([
-            'base_uri' => self::W3C_MARKUP_VALIDATION_SERVICE_BASE_URI,
-        ]);
-        $reponse = $client->post(self::W3C_MARKUP_VALIDATION_SERVICE_ENDPOINT, [
-            'headers' => [
-                'Content-Type' => 'text/html; charset=UTF-8;',
-            ],
-            'query' => [
-                'out' => 'json',
-            ],
-            'body' => $markup,
-        ]);
-        $responseContents = $reponse->getBody()->getContents();
-        $responseData = json_decode($responseContents);
-        if ($responseData === null) {
-            throw new Exception('Unable to parse W3C Markup Validation Service response.');
-        }
-
-        return $responseData;
+        $this->validator = $this->makeComponent(
+            'validator',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface'
+        );
     }
 
     /**
-     * Processes a document markup validation message.
-     *
-     * @param stdClass $message Markup validation message.
-     * @param bool|null $ignoreWarnings Whether to ignore warnings or not.
+     * Initializes markup validator.
      */
-    protected function processMarkupValidationMessage(stdClass $message, $ignoreWarnings)
+    private function initializeReporter()
     {
-        $type = $message->type;
-        $summary = $message->message;
-        $details = isset($message->extract)
-                    ? $message->extract
-                    : 'unavailable';
-        if ($type === 'error' ||
-            $type === 'info' && !$this->ignoreWarnings($ignoreWarnings)
-        ) {
-            $errorIsIgnored = $this->ignoreError($summary);
-            if (!$errorIsIgnored) {
-                $this->reportMarkupValidationError($summary, $details);
-            }
-        }
+        $this->reporter = $this->makeComponent(
+            'reporter',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface'
+        );
     }
 
     /**
-     * Reports a document markup validation error.
+     * Constructs a validator component.
      *
-     * @param string $summary Markup validation error summary.
-     * @param string $details Markup validation error details.
-     */
-    protected function reportMarkupValidationError($summary, $details)
-    {
-        $template = 'Markup validation error. %s. Details: %s';
-        $message = sprintf($template, $summary, $details);
-        $this->fail($message);
-    }
-
-    /**
-     * Returns an actual value of the `ignoreWarnings` parameter.
+     * @param string $name Component name.
+     * @param string $interface Component interface.
      *
-     * If local value is `null`, module-wide value (`false`) is used.
-     * @param bool|null $ignoreWarnings A local value of the `ignoreWarnings` parameter.
+     * @return object Component instance.
      */
-    private function ignoreWarnings($ignoreWarnings)
+    private function makeComponent($name, $interface)
     {
-        if (is_bool($ignoreWarnings)) {
-            return $ignoreWarnings;
+        $componentClass = $this->config[$name]['class'];
+        $componentConfig = $this->config[$name]['config'];
+        $component = new $componentClass($componentConfig);
+        if (($component instanceof $interface) === false) {
+            $errorMessage = sprintf('Invalid component class provided: «%s».', $componentClass);
+            throw new Exception($errorMessage);
         }
 
-        // Fall back to a module-wide configuration.
-        $ignoreWarnings = $this->config['ignoreWarnings'];
-
-        return $ignoreWarnings;
-    }
-
-    /**
-     * Returns a boolean indicating whether an error is ignored or not.
-     *
-     * @param string $summary Error summary.
-     * @return boolean Whether an error is ignored or not.
-     */
-    private function ignoreError($summary)
-    {
-        $ignoredErrors = $this->config['ignoredErrors'];
-        foreach ($ignoredErrors as $ignoredError) {
-            $erorIsIgnored = preg_match($ignoredError, $summary) === 1;
-            if ($erorIsIgnored) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns current page markup form the PhpBrowser.
-     *
-     * @return string Current page markup.
-     */
-    private function getMarkupFromPhpBrowser()
-    {
-        $moduleName = 'PhpBrowser';
-        if (!$this->hasModule($moduleName)) {
-            throw new Exception(sprintf('"%s" module is not enabled.', $moduleName));
-        }
-
-        /* @var $phpBrowser PhpBrowser */
-        $phpBrowser = $this->getModule($moduleName);
-        $markup = $phpBrowser->_getResponseContent();
-
-        return $markup;
-    }
-
-    /**
-     * Returns current page markup form the WebDriver.
-     *
-     * @return string Current page markup.
-     */
-    private function getMarkupFromWebDriver()
-    {
-        $moduleName = 'WebDriver';
-        if (!$this->hasModule($moduleName)) {
-            throw new Exception(sprintf('"%s" module is not enabled.', $moduleName));
-        }
-
-        /* @var $webDriver WebDriver */
-        $webDriver = $this->getModule($moduleName);
-        $markup = $webDriver->webDriver->getPageSource();
-
-        return $markup;
+        return $component;
     }
 }
