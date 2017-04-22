@@ -29,6 +29,7 @@ modules:
 
 Use it in your acceptance tests like this:
 ```php
+$I->amOnPage('/');
 $I->validateMarkup();
 ```
 
