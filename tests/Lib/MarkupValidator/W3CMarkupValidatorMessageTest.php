@@ -105,6 +105,31 @@ class W3CMarkupValidatorMessageTest extends TestCase
                 'details' => null,
                 'markup' => '<some-markup></some-markup>',
             ),
+            array(
+                'data' => array(
+                    'type' => null,
+                    'lastLine' => 7,
+                    'lastColumn' => 50,
+                    'firstColumn' => 29,
+                    'subType' => null,
+                    'message' => 'Undefined message.',
+                    'extract' => null,
+                    'hiliteStart' => 10,
+                    'hiliteLength' => 22,
+                ),
+                'type' => MarkupValidatorMessageInterface::TYPE_UNDEFINED,
+                'summary' => 'Undefined message.',
+                'details' => null,
+                'markup' => null,
+            ),
+            array(
+                'data' => array(
+                ),
+                'type' => MarkupValidatorMessageInterface::TYPE_UNDEFINED,
+                'summary' => null,
+                'details' => null,
+                'markup' => null,
+            ),
         );
     }
 }
