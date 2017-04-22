@@ -10,21 +10,14 @@ use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidatorMessage;
 class W3CMarkupValidator implements MarkupValidatorInterface
 {
     /**
-     * Base URI of the W3C Markup Validator Service.
-     */
-    const BASE_URI = 'https://validator.w3.org/';
-
-    /**
-     * Endpoint of the W3C Markup Validator Service.
-     */
-    const ENDPOINT = '/nu/';
-
-    /**
      * Configuration parameters.
      *
      * @var array
      */
-    private $config;
+    private $config = array(
+        'baseUri' => 'https://validator.w3.org/',
+        'endpoint' => '/nu/',
+    );
 
     /**
      * HTTP client used to communicate with the W3C Markup Validation Service.
@@ -45,7 +38,7 @@ class W3CMarkupValidator implements MarkupValidatorInterface
      */
     public function __construct(array $config = array())
     {
-        $this->config = $config;
+        $this->config = array_merge($this->config, $config);
 
         $this->initializeHttpClient();
         $this->initializeHttpRequestParameters();
@@ -68,7 +61,7 @@ class W3CMarkupValidator implements MarkupValidatorInterface
     private function initializeHttpClient()
     {
         $this->httpClient = new Client([
-            'base_uri' => self::BASE_URI,
+            'base_uri' => $this->config['baseUri'],
         ]);
     }
 
@@ -98,11 +91,14 @@ class W3CMarkupValidator implements MarkupValidatorInterface
     {
         $this->httpRequestParameters['body'] = $markup;
 
-        $reponse = $this->httpClient->post(self::ENDPOINT, $this->httpRequestParameters);
+        $reponse = $this->httpClient->post(
+            $this->config['endpoint'],
+            $this->httpRequestParameters
+        );
         $responseData = $reponse->getBody()->getContents();
         $validationData = json_decode($responseData, true);
         if ($validationData === null) {
-            $errorMessageTemplate = "Unable to parse W3C Markup Validation Service response. Response data:\n%s\n";
+            $errorMessageTemplate = "Unable to parse W3C Markup Validation Service response.";
             throw new Exception(sprintf($errorMessageTemplate, $responseData));
         }
 
