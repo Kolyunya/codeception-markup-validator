@@ -2,6 +2,7 @@
 
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
+use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
@@ -9,7 +10,7 @@ use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
 class W3CMarkupValidatorTest extends TestCase
 {
     /**
-     * @var W3CMarkupValidator
+     * @var W3CMarkupValidator|PHPUnit_Framework_MockObject_MockObject
      */
     private $validator;
 

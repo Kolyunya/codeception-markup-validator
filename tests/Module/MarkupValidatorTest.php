@@ -3,6 +3,7 @@
 namespace Kolyunya\Codeception\Tests\Module;
 
 use Exception;
+use PHPUnit_Framework_MockObject_MockObject;
 use Codeception\Lib\ModuleContainer;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Module\MarkupValidator;
@@ -10,12 +11,12 @@ use Kolyunya\Codeception\Module\MarkupValidator;
 class MarkupValidatorTest extends TestCase
 {
     /**
-     * @var ModuleContainer
+     * @var ModuleContainer|PHPUnit_Framework_MockObject_MockObject
      */
     private $moduleContainer;
 
     /**
-     * @var MarkupValidator
+     * @var MarkupValidator|PHPUnit_Framework_MockObject_MockObject
      */
     private $module;
 

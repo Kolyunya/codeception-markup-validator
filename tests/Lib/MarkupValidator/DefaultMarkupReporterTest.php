@@ -3,6 +3,7 @@
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
 use Exception;
+use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessage;
@@ -11,7 +12,7 @@ use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 class DefaultMarkupReporterTest extends TestCase
 {
     /**
-     * @var DefaultMarkupReporter
+     * @var DefaultMarkupReporter|PHPUnit_Framework_MockObject_MockObject
      */
     private $markupReporter;
 
@@ -77,7 +78,7 @@ class DefaultMarkupReporterTest extends TestCase
     /**
      * @dataProvider testIgnoredErrorsDataProvider
      */
-    public function testIgnoredErrors($message, $ignore)
+    public function testIgnoredErrors($message, $ignore, $isIgnored)
     {
         $this->markupReporter = new DefaultMarkupReporter(array(
             'ignoredErrors' => array(
@@ -85,8 +86,20 @@ class DefaultMarkupReporterTest extends TestCase
             ),
         ));
 
-        $this->markupReporter->report($message);
-        $this->assertTrue(true);
+        if ($isIgnored === true) {
+            $this->markupReporter->report($message);
+            $this->assertTrue(true);
+            return;
+        }
+
+        try {
+            $this->markupReporter->report($message);
+        } catch (Exception $exception) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->fail();
     }
 
     public function testMessageNotReportedDataProvider()
@@ -138,6 +151,7 @@ class DefaultMarkupReporterTest extends TestCase
                     'Some cryptic error message.'
                 ),
                 '/cryptic error/',
+                true,
             ),
             array(
                 new MarkupValidatorMessage(
@@ -145,6 +159,7 @@ class DefaultMarkupReporterTest extends TestCase
                     'Case insensitive error message.'
                 ),
                 '/case insensitive error message./i',
+                true,
             ),
             array(
                 new MarkupValidatorMessage(
@@ -152,6 +167,14 @@ class DefaultMarkupReporterTest extends TestCase
                     'Текст ошибки в UTF-8.'
                 ),
                 '/Текст ошибки в UTF-8./u',
+                true,
+            ),
+            array(
+                new MarkupValidatorMessage(
+                    MarkupValidatorMessageInterface::TYPE_ERROR
+                ),
+                '/error/',
+                false,
             ),
         );
     }

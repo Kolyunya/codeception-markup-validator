@@ -2,6 +2,7 @@
 
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
+use PHPUnit_Framework_MockObject_MockObject;
 use Codeception\Lib\ModuleContainer;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider;
@@ -9,12 +10,12 @@ use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider;
 class DefaultMarkupProviderTest extends TestCase
 {
     /**
-     * @var ModuleContainer
+     * @var ModuleContainer|PHPUnit_Framework_MockObject_MockObject
      */
     private $moduleContainer;
 
     /**
-     * @var DefaultMarkupProvider
+     * @var DefaultMarkupProvider|PHPUnit_Framework_MockObject_MockObject
      */
     private $markupProvider;
 

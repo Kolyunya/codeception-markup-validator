@@ -37,7 +37,7 @@ interface MarkupValidatorMessageInterface
     /**
      * Returns message type.
      *
-     * @return int Message type.
+     * @return string Message type.
      */
     public function getType();
 
