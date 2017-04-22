@@ -12,7 +12,7 @@ class MarkupValidatorMessage implements MarkupValidatorMessageInterface
     /**
      * Message type.
      *
-     * @var integer
+     * @var string
      */
     protected $type;
 

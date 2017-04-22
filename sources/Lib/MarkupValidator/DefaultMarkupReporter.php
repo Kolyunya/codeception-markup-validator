@@ -71,7 +71,10 @@ class DefaultMarkupReporter implements MarkupReporterInterface
         $ignoreWarnings = false;
 
         $ignoreWarningsConfigKey = 'ignoreWarnings';
-        if (isset($this->config[$ignoreWarningsConfigKey]) === true) {
+        if (isset($this->config[$ignoreWarningsConfigKey]) === true &&
+            is_bool($this->config[$ignoreWarningsConfigKey]) === true
+        ) {
+            /* @var $ignoreWarnings bool */
             $ignoreWarnings = $this->config[$ignoreWarningsConfigKey];
         }
 
@@ -81,12 +84,16 @@ class DefaultMarkupReporter implements MarkupReporterInterface
     /**
      * Returns a boolean indicating whether an error is ignored or not.
      *
-     * @param string $summary Error summary.
+     * @param string|null $summary Error summary.
      * @return boolean Whether an error is ignored or not.
      */
     private function ignoreError($summary)
     {
         $ignoreError = false;
+
+        if ($summary === null) {
+            return $ignoreError;
+        }
 
         $ignoredErrorsConfigKey = 'ignoredErrors';
         if (isset($this->config[$ignoredErrorsConfigKey]) === true &&
