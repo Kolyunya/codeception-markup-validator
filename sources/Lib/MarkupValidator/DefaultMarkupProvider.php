@@ -22,19 +22,11 @@ class DefaultMarkupProvider implements MarkupProviderInterface
     private $moduleContainer;
 
     /**
-     * Configuration parameters.
-     *
-     * @var array
-     */
-    private $config;
-
-    /**
      * {@inheritDoc}
      */
     public function __construct(ModuleContainer $moduleContainer, array $config = array())
     {
         $this->moduleContainer = $moduleContainer;
-        $this->config = $config;
     }
 
     /**

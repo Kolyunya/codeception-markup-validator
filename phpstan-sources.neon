@@ -1,3 +1,4 @@
 parameters:
     ignoreErrors:
+        - '/DefaultMarkupProvider has an unused parameter \$config/'
         - '/Call to an undefined method GuzzleHttp\\Client::post\(\)/'
