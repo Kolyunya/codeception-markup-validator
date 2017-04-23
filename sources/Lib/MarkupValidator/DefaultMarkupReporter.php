@@ -26,7 +26,7 @@ class DefaultMarkupReporter implements MarkupReporterInterface
      * @var array
      */
     private $config = array(
-        self::IGNORE_WARNINGS_CONFIG_KEY => false,
+        self::IGNORE_WARNINGS_CONFIG_KEY => true,
         self::IGNORED_ERRORS_CONFIG_KEY => array(),
     );
 
