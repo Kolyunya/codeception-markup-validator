@@ -23,6 +23,11 @@ class DefaultMarkupReporterTest extends TestCase
     {
         $this->markupReporter = $this
             ->getMockBuilder('Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter')
+            ->setConstructorArgs(array(
+                array(
+                    'ignoreWarnings' => false,
+                ),
+            ))
             ->enableProxyingToOriginalMethods()
             ->getMock()
         ;
