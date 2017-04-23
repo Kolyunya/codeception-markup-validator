@@ -1,7 +1,7 @@
 {
     "name": "kolyunya/codeception-markup-validator",
     "description": "Markup validator module for Codeception.",
-    "license": "GNU GPL v3.0",
+    "license": "GPL-3.0",
     "type": "library",
     "keywords": [
         "acceptance-testing",
@@ -19,7 +19,7 @@
             "homepage": "http://github.com/Kolyunya"
         }
     ],
-    "minimal-stability": "stable",
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.4 <8.0",
         "codeception/codeception": "^2.0.0"
