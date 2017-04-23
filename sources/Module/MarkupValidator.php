@@ -5,6 +5,7 @@ namespace Kolyunya\Codeception\Module;
 use Exception;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
+use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
@@ -14,23 +15,33 @@ use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
  */
 class MarkupValidator extends Module
 {
+    const PROVIDER_CONFIG_KEY = 'provider';
+
+    const VALIDATOR_CONFIG_KEY = 'validator';
+
+    const REPORTER_CONFIG_KEY = 'reporter';
+
+    const COMPONENT_CLASS_CONFIG_KEY = 'class';
+
+    const COMPONENT_CONFIG_CONFIG_KEY = 'config';
+
     /**
      * {@inheritDoc}
      */
     protected $config = array(
-        'provider' => array(
-            'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
-            'config' => array(),
+        self::PROVIDER_CONFIG_KEY => array(
+            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
-        'validator' => array(
-            'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
-            'config' => array(),
+        self::VALIDATOR_CONFIG_KEY => array(
+            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
-        'reporter' => array(
-            'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
-            'config' => array(
-                'ignoredErrors' => array(),
-                'ignoreWarnings' => false,
+        self::REPORTER_CONFIG_KEY => array(
+            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(
+                DefaultMarkupReporter::IGNORED_ERRORS_CONFIG_KEY => array(),
+                DefaultMarkupReporter::IGNORE_WARNINGS_CONFIG_KEY => false,
             ),
         ),
     );
@@ -89,7 +100,7 @@ class MarkupValidator extends Module
      */
     private function initializeProvider()
     {
-        $providerName = 'provider';
+        $providerName = self::PROVIDER_CONFIG_KEY;
         $providerClass = $this->getComponentClass($providerName);
         $providerConfig = $this->getComponentConfig($providerName);
         $this->provider = new $providerClass($this->moduleContainer, $providerConfig);
@@ -102,7 +113,7 @@ class MarkupValidator extends Module
      */
     private function initializeValidator()
     {
-        $validatorName = 'validator';
+        $validatorName = self::VALIDATOR_CONFIG_KEY;
         $validatorClass = $this->getComponentClass($validatorName);
         $validatorConfig = $this->getComponentConfig($validatorName);
         $this->validator = new $validatorClass($validatorConfig);
@@ -115,7 +126,7 @@ class MarkupValidator extends Module
      */
     private function initializeReporter()
     {
-        $reporterName = 'reporter';
+        $reporterName = self::REPORTER_CONFIG_KEY;
         $reporterClass = $this->getComponentClass($reporterName);
         $reporterConfig = $this->getComponentConfig($reporterName);
         $this->reporter = new $reporterClass($reporterConfig);
@@ -132,7 +143,7 @@ class MarkupValidator extends Module
      */
     private function getComponentClass($componentName)
     {
-        $componentClassKey = 'class';
+        $componentClassKey = self::COMPONENT_CLASS_CONFIG_KEY;
         if (isset($this->config[$componentName][$componentClassKey]) === false ||
             is_string($this->config[$componentName][$componentClassKey]) === false
         ) {
@@ -156,7 +167,7 @@ class MarkupValidator extends Module
     {
         $componentConfig = array();
 
-        $componentConfigKey = 'config';
+        $componentConfigKey = self::COMPONENT_CONFIG_CONFIG_KEY;
         if (isset($this->config[$componentName][$componentConfigKey]) === true) {
             if (is_array($this->config[$componentName][$componentConfigKey]) === true) {
                 $componentConfig = $this->config[$componentName][$componentConfigKey];
