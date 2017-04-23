@@ -1,25 +1,37 @@
 # Codeception Markup Validator
-
-## Status
+[![Latest Stable Version](https://poser.pugx.org/kolyunya/codeception-markup-validator/v/stable)](https://packagist.org/packages/kolyunya/codeception-markup-validator)
 [![Build Status](https://travis-ci.org/Kolyunya/codeception-markup-validator.svg?branch=master)](https://travis-ci.org/Kolyunya/codeception-markup-validator)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 [![Coverage Status](https://img.shields.io/coveralls/Kolyunya/codeception-markup-validator/master.svg)](https://coveralls.io/github/Kolyunya/codeception-markup-validator?branch=master)
 [![Code Climate](https://codeclimate.com/github/Kolyunya/codeception-markup-validator/badges/gpa.svg)](https://codeclimate.com/github/Kolyunya/codeception-markup-validator)
-[![Latest Stable Version](https://poser.pugx.org/kolyunya/codeception-markup-validator/v/stable)](https://packagist.org/packages/kolyunya/codeception-markup-validator)
-
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/2f69d58a-60cb-4a89-b59f-c88129465982/big.png)](https://insight.sensiolabs.com/projects/2f69d58a-60cb-4a89-b59f-c88129465982)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/2f69d58a-60cb-4a89-b59f-c88129465982/mini.png)](https://insight.sensiolabs.com/projects/2f69d58a-60cb-4a89-b59f-c88129465982)
 
 ## Description
-Markup validator module for Codeception.
+Markup validator module for Codeception. Validates web-page markup (HTML, XHTML etc.) via markup validators e.g. [W3C Markup Validator Service](https://validator.w3.org/docs/api.html). Informs you when your markup gets broken.
+
+## Features
+
+### Simple
+Basic usage requires literally no configuraton. Works as you expect it out of box. Zero effort tests which will inform you when your markup gets broken. Usage is as simple as:
+```php
+$I->amOnPage('/');
+$I->validateMarkup();
+```
+
+### Extendable
+The module is fully configurable and extendable if you want to hack it. Each component of the module can be replaced with a custom implementation. Just implement a simple interface and inject your custom component to the module.
+
+### Robust
+The module has a complete test coverage. Multiple code-quality tools ([Sensio Labs Insight](https://insight.sensiolabs.com/projects/2f69d58a-60cb-4a89-b59f-c88129465982), [Code Climate](https://codeclimate.com/github/Kolyunya/codeception-markup-validator), [PHPStan](https://github.com/phpstan/phpstan)) report very high quality of module's code.
 
 ## Installation
-The recommended way of package installation is via composer:
+The recommended way of module installation is via composer:
 ```sh
 composer require --dev kolyunya/codeception-markup-validator
 ```
 
 ## Usage
-Add the module to you acceptance suit configuration:
+Add the module to your acceptance suit configuration:
 ```yaml
 class_name: AcceptanceTester
 modules:
