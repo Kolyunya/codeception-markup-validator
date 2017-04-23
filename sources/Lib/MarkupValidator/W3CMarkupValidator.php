@@ -9,14 +9,18 @@ use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidatorMessage;
 
 class W3CMarkupValidator implements MarkupValidatorInterface
 {
+    const BASE_URI_CONFIG_KEY = 'baseUri';
+
+    const ENDPOINT_CONFIG_KEY = 'endpoint';
+
     /**
      * Configuration parameters.
      *
      * @var array
      */
     private $config = array(
-        'baseUri' => 'https://validator.w3.org/',
-        'endpoint' => '/nu/',
+        self::BASE_URI_CONFIG_KEY => 'https://validator.w3.org/',
+        self::ENDPOINT_CONFIG_KEY => '/nu/',
     );
 
     /**
@@ -61,7 +65,7 @@ class W3CMarkupValidator implements MarkupValidatorInterface
     private function initializeHttpClient()
     {
         $this->httpClient = new Client([
-            'base_uri' => $this->config['baseUri'],
+            'base_uri' => $this->config[self::BASE_URI_CONFIG_KEY],
         ]);
     }
 
@@ -92,7 +96,7 @@ class W3CMarkupValidator implements MarkupValidatorInterface
         $this->httpRequestParameters['body'] = $markup;
 
         $reponse = $this->httpClient->post(
-            $this->config['endpoint'],
+            $this->config[self::ENDPOINT_CONFIG_KEY],
             $this->httpRequestParameters
         );
         $responseData = $reponse->getBody()->getContents();
