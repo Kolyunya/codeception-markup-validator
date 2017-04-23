@@ -31,7 +31,7 @@ composer require --dev kolyunya/codeception-markup-validator
 ```
 
 ## Usage
-Add the module to your acceptance suit configuration:
+Add the module to your acceptance test suit configuration:
 ```yaml
 class_name: AcceptanceTester
 modules:
@@ -41,7 +41,12 @@ modules:
         - Kolyunya\Codeception\Module\MarkupValidator
 ```
 
-Use it in your acceptance tests like this:
+Build the test suit:
+```sh
+codecept build
+```
+
+Validate markup:
 ```php
 $I->amOnPage('/');
 $I->validateMarkup();
