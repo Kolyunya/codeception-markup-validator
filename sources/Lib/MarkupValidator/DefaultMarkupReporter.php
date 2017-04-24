@@ -2,6 +2,7 @@
 
 namespace Kolyunya\Codeception\Lib\MarkupValidator;
 
+use Exception;
 use Codeception\Util\Shared\Asserts;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
@@ -72,14 +73,12 @@ class DefaultMarkupReporter implements MarkupReporterInterface
      */
     private function ignoreWarnings()
     {
-        $ignoreWarnings = false;
-
-        if (isset($this->config[self::IGNORE_WARNINGS_CONFIG_KEY]) === true &&
-            is_bool($this->config[self::IGNORE_WARNINGS_CONFIG_KEY]) === true
-        ) {
-            /* @var $ignoreWarnings bool */
-            $ignoreWarnings = $this->config[self::IGNORE_WARNINGS_CONFIG_KEY];
+        if (is_bool($this->config[self::IGNORE_WARNINGS_CONFIG_KEY]) === false) {
+            throw new Exception(sprintf('Invalid «%s» config key.', self::IGNORE_WARNINGS_CONFIG_KEY));
         }
+
+        /* @var $ignoreWarnings bool */
+        $ignoreWarnings = $this->config[self::IGNORE_WARNINGS_CONFIG_KEY];
 
         return $ignoreWarnings;
     }
@@ -92,22 +91,22 @@ class DefaultMarkupReporter implements MarkupReporterInterface
      */
     private function ignoreError($summary)
     {
+        if (is_array($this->config[self::IGNORED_ERRORS_CONFIG_KEY]) === false) {
+            throw new Exception(sprintf('Invalid «%s» config key.', self::IGNORED_ERRORS_CONFIG_KEY));
+        }
+
         $ignoreError = false;
 
         if ($summary === null) {
             return $ignoreError;
         }
 
-        if (isset($this->config[self::IGNORED_ERRORS_CONFIG_KEY]) === true &&
-            is_array($this->config[self::IGNORED_ERRORS_CONFIG_KEY]) === true
-        ) {
-            $ignoredErrors = $this->config[self::IGNORED_ERRORS_CONFIG_KEY];
-            foreach ($ignoredErrors as $ignoredError) {
-                $erorIsIgnored = preg_match($ignoredError, $summary) === 1;
-                if ($erorIsIgnored) {
-                    $ignoreError = true;
-                    break;
-                }
+        $ignoredErrors = $this->config[self::IGNORED_ERRORS_CONFIG_KEY];
+        foreach ($ignoredErrors as $ignoredError) {
+            $erorIsIgnored = preg_match($ignoredError, $summary) === 1;
+            if ($erorIsIgnored) {
+                $ignoreError = true;
+                break;
             }
         }
 
