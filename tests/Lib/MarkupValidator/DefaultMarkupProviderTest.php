@@ -15,9 +15,9 @@ class DefaultMarkupProviderTest extends TestCase
     private $moduleContainer;
 
     /**
-     * @var DefaultMarkupProvider|PHPUnit_Framework_MockObject_MockObject
+     * @var DefaultMarkupProvider
      */
-    private $markupProvider;
+    private $provider;
 
     /**
      * {@inheritDoc}
@@ -34,14 +34,7 @@ class DefaultMarkupProviderTest extends TestCase
             ->getMock()
         ;
 
-        $this->markupProvider = $this
-            ->getMockBuilder(DefaultMarkupProvider::getClassName())
-            ->setConstructorArgs(array(
-                $this->moduleContainer,
-            ))
-            ->enableProxyingToOriginalMethods()
-            ->getMock()
-        ;
+        $this->provider = new DefaultMarkupProvider($this->moduleContainer);
     }
 
     /**
@@ -54,7 +47,7 @@ class DefaultMarkupProviderTest extends TestCase
     public function testWithNoPhpBrowserNoWebDriver()
     {
         $this->setExpectedException('Exception', 'Unable to obtain current page markup.');
-        $this->markupProvider->getMarkup();
+        $this->provider->getMarkup();
     }
 
     public function testWithPhpBrowser()
@@ -98,7 +91,7 @@ HTML
             )))
         ;
 
-        $actualMarkup = $this->markupProvider->getMarkup();
+        $actualMarkup = $this->provider->getMarkup();
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
 
@@ -150,7 +143,7 @@ HTML
             )))
         ;
 
-        $actualMarkup = $this->markupProvider->getMarkup();
+        $actualMarkup = $this->provider->getMarkup();
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
 }
