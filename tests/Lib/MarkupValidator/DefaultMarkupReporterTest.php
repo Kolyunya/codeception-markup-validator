@@ -107,6 +107,33 @@ class DefaultMarkupReporterTest extends TestCase
         $this->fail();
     }
 
+    public function testInvalidIgnoreWarningsConfig()
+    {
+        $this->setExpectedException('Exception', 'Invalid «ignoreWarnings» config key.');
+
+        $warning = new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_WARNING);
+
+        $reporter = new DefaultMarkupReporter(array(
+            'ignoreWarnings' => array(
+                'foo' => false,
+                'bar' => true,
+            ),
+        ));
+        $reporter->report($warning);
+    }
+
+    public function testInvalidIgnoreErrorsConfig()
+    {
+        $this->setExpectedException('Exception', 'Invalid «ignoredErrors» config key.');
+
+        $error = new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR);
+
+        $reporter = new DefaultMarkupReporter(array(
+            'ignoredErrors' => false,
+        ));
+        $reporter->report($error);
+    }
+
     public function testMessageNotReportedDataProvider()
     {
         return array(
