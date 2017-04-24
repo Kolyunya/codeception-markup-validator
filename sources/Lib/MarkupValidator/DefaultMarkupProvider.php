@@ -25,8 +25,10 @@ class DefaultMarkupProvider extends Component implements MarkupProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function __construct(ModuleContainer $moduleContainer, array $config = array())
+    public function __construct(ModuleContainer $moduleContainer, array $configuration = array())
     {
+        parent::__construct($configuration);
+
         $this->moduleContainer = $moduleContainer;
     }
 

@@ -2,7 +2,6 @@
 
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
-use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
@@ -10,7 +9,7 @@ use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
 class W3CMarkupValidatorTest extends TestCase
 {
     /**
-     * @var W3CMarkupValidator|PHPUnit_Framework_MockObject_MockObject
+     * @var W3CMarkupValidator
      */
     private $validator;
 
@@ -19,11 +18,7 @@ class W3CMarkupValidatorTest extends TestCase
      */
     public function setUp()
     {
-        $this->validator = $this
-            ->getMockBuilder(W3CMarkupValidator::getClassName())
-            ->enableProxyingToOriginalMethods()
-            ->getMock()
-        ;
+        $this->validator = new W3CMarkupValidator();
     }
 
     /**
@@ -56,7 +51,7 @@ class W3CMarkupValidatorTest extends TestCase
     {
         $this->setExpectedException('Exception', 'Unable to parse W3C Markup Validation Service response.');
 
-        $this->validator = new W3CMarkupValidator(array(
+        $this->validator->setConfiguration(array(
             'baseUri' => 'https://validator.w3.org/',
             'endpoint' => '/',
         ));

@@ -19,7 +19,7 @@ class W3CMarkupValidator extends Component implements MarkupValidatorInterface
      *
      * @var array
      */
-    private $config = array(
+    protected $configuration = array(
         self::BASE_URI_CONFIG_KEY => 'https://validator.w3.org/',
         self::ENDPOINT_CONFIG_KEY => '/nu/',
     );
@@ -41,9 +41,9 @@ class W3CMarkupValidator extends Component implements MarkupValidatorInterface
     /**
      * {@inheritDoc}
      */
-    public function __construct(array $config = array())
+    public function __construct(array $configuration = array())
     {
-        $this->config = array_merge($this->config, $config);
+        parent::__construct($configuration);
 
         $this->initializeHttpClient();
         $this->initializeHttpRequestParameters();
@@ -66,7 +66,7 @@ class W3CMarkupValidator extends Component implements MarkupValidatorInterface
     private function initializeHttpClient()
     {
         $this->httpClient = new Client([
-            'base_uri' => $this->config[self::BASE_URI_CONFIG_KEY],
+            'base_uri' => $this->configuration[self::BASE_URI_CONFIG_KEY],
         ]);
     }
 
@@ -97,7 +97,7 @@ class W3CMarkupValidator extends Component implements MarkupValidatorInterface
         $this->httpRequestParameters['body'] = $markup;
 
         $reponse = $this->httpClient->post(
-            $this->config[self::ENDPOINT_CONFIG_KEY],
+            $this->configuration[self::ENDPOINT_CONFIG_KEY],
             $this->httpRequestParameters
         );
         $responseData = $reponse->getBody()->getContents();
