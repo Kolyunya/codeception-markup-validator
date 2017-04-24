@@ -27,7 +27,7 @@ class DefaultMarkupReporter extends Component implements MarkupReporterInterface
      *
      * @var array
      */
-    private $config = array(
+    protected $configuration = array(
         self::IGNORE_WARNINGS_CONFIG_KEY => true,
         self::IGNORED_ERRORS_CONFIG_KEY => array(),
     );
@@ -35,9 +35,9 @@ class DefaultMarkupReporter extends Component implements MarkupReporterInterface
     /**
      * {@inheritDoc}
      */
-    public function __construct(array $config = array())
+    public function __construct(array $configuration = array())
     {
-        $this->config = array_merge($this->config, $config);
+        parent::__construct($configuration);
     }
 
     /**
@@ -74,12 +74,12 @@ class DefaultMarkupReporter extends Component implements MarkupReporterInterface
      */
     private function ignoreWarnings()
     {
-        if (is_bool($this->config[self::IGNORE_WARNINGS_CONFIG_KEY]) === false) {
+        if (is_bool($this->configuration[self::IGNORE_WARNINGS_CONFIG_KEY]) === false) {
             throw new Exception(sprintf('Invalid «%s» config key.', self::IGNORE_WARNINGS_CONFIG_KEY));
         }
 
         /* @var $ignoreWarnings bool */
-        $ignoreWarnings = $this->config[self::IGNORE_WARNINGS_CONFIG_KEY];
+        $ignoreWarnings = $this->configuration[self::IGNORE_WARNINGS_CONFIG_KEY];
 
         return $ignoreWarnings;
     }
@@ -92,7 +92,7 @@ class DefaultMarkupReporter extends Component implements MarkupReporterInterface
      */
     private function ignoreError($summary)
     {
-        if (is_array($this->config[self::IGNORED_ERRORS_CONFIG_KEY]) === false) {
+        if (is_array($this->configuration[self::IGNORED_ERRORS_CONFIG_KEY]) === false) {
             throw new Exception(sprintf('Invalid «%s» config key.', self::IGNORED_ERRORS_CONFIG_KEY));
         }
 
@@ -102,7 +102,7 @@ class DefaultMarkupReporter extends Component implements MarkupReporterInterface
             return $ignoreError;
         }
 
-        $ignoredErrors = $this->config[self::IGNORED_ERRORS_CONFIG_KEY];
+        $ignoredErrors = $this->configuration[self::IGNORED_ERRORS_CONFIG_KEY];
         foreach ($ignoredErrors as $ignoredError) {
             $erorIsIgnored = preg_match($ignoredError, $summary) === 1;
             if ($erorIsIgnored) {

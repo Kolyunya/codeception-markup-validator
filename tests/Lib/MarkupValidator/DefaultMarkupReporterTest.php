@@ -3,7 +3,6 @@
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
 use Exception;
-use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessage;
@@ -12,25 +11,16 @@ use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 class DefaultMarkupReporterTest extends TestCase
 {
     /**
-     * @var DefaultMarkupReporter|PHPUnit_Framework_MockObject_MockObject
+     * @var DefaultMarkupReporter
      */
-    private $markupReporter;
+    private $reporter;
 
     /**
      * {@inheritDoc}
      */
     public function setUp()
     {
-        $this->markupReporter = $this
-            ->getMockBuilder(DefaultMarkupReporter::getClassName())
-            ->setConstructorArgs(array(
-                array(
-                    'ignoreWarnings' => false,
-                ),
-            ))
-            ->enableProxyingToOriginalMethods()
-            ->getMock()
-        ;
+        $this->reporter = new DefaultMarkupReporter();
     }
 
     /**
@@ -45,7 +35,7 @@ class DefaultMarkupReporterTest extends TestCase
      */
     public function testMessageNotReported(MarkupValidatorMessageInterface $message)
     {
-        $this->markupReporter->report($message);
+        $this->reporter->report($message);
         $this->assertTrue(true);
     }
 
@@ -54,8 +44,13 @@ class DefaultMarkupReporterTest extends TestCase
      */
     public function testMessageReported(MarkupValidatorMessageInterface $message, $report)
     {
+        $this->reporter->setConfiguration(array(
+            'ignoreWarnings' => false,
+            'ignoredErrors' => array(),
+        ));
+
         try {
-            $this->markupReporter->report($message);
+            $this->reporter->report($message);
         } catch (Exception $exception) {
             $exceptionMessage = $exception->getMessage();
             $this->assertTrue(is_string($exceptionMessage));
@@ -68,7 +63,7 @@ class DefaultMarkupReporterTest extends TestCase
 
     public function testIgnoreWarnings()
     {
-        $this->markupReporter = new DefaultMarkupReporter(array(
+        $this->reporter->setConfiguration(array(
             'ignoreWarnings' => true,
         ));
 
@@ -76,7 +71,7 @@ class DefaultMarkupReporterTest extends TestCase
             MarkupValidatorMessageInterface::TYPE_WARNING
         );
 
-        $this->markupReporter->report($warning);
+        $this->reporter->report($warning);
         $this->assertTrue(true);
     }
 
@@ -85,20 +80,20 @@ class DefaultMarkupReporterTest extends TestCase
      */
     public function testIgnoredErrors($message, $ignore, $isIgnored)
     {
-        $this->markupReporter = new DefaultMarkupReporter(array(
+        $this->reporter->setConfiguration(array(
             'ignoredErrors' => array(
                 $ignore,
             ),
         ));
 
         if ($isIgnored === true) {
-            $this->markupReporter->report($message);
+            $this->reporter->report($message);
             $this->assertTrue(true);
             return;
         }
 
         try {
-            $this->markupReporter->report($message);
+            $this->reporter->report($message);
         } catch (Exception $exception) {
             $this->assertTrue(true);
             return;
@@ -113,13 +108,13 @@ class DefaultMarkupReporterTest extends TestCase
 
         $warning = new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_WARNING);
 
-        $reporter = new DefaultMarkupReporter(array(
+        $this->reporter->setConfiguration(array(
             'ignoreWarnings' => array(
                 'foo' => false,
                 'bar' => true,
             ),
         ));
-        $reporter->report($warning);
+        $this->reporter->report($warning);
     }
 
     public function testInvalidIgnoreErrorsConfig()
@@ -128,10 +123,10 @@ class DefaultMarkupReporterTest extends TestCase
 
         $error = new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR);
 
-        $reporter = new DefaultMarkupReporter(array(
+        $this->reporter->setConfiguration(array(
             'ignoredErrors' => false,
         ));
-        $reporter->report($error);
+        $this->reporter->report($error);
     }
 
     public function testMessageNotReportedDataProvider()
