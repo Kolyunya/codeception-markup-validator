@@ -72,3 +72,6 @@ modules:
                         - '/some error/'
                         - '/another error/'
 ```
+
+## Contributing
+If you found a bug or have a feature request feel free to [open an issue](https://github.com/Kolyunya/codeception-markup-validator/issues/new). If you want to send a pull request, backward-compatible changes should target `master` branch while breaking changes - next major branch.
