@@ -16,7 +16,7 @@ class MarkupValidatorTest extends TestCase
     private $moduleContainer;
 
     /**
-     * @var MarkupValidator|PHPUnit_Framework_MockObject_MockObject
+     * @var MarkupValidator
      */
     private $module;
 
@@ -35,15 +35,7 @@ class MarkupValidatorTest extends TestCase
             ->getMock()
         ;
 
-        $this->module = $this
-            ->getMockBuilder('Kolyunya\Codeception\Module\MarkupValidator')
-            ->setConstructorArgs(array(
-                $this->moduleContainer,
-                null,
-            ))
-            ->enableProxyingToOriginalMethods()
-            ->getMock()
-        ;
+        $this->module = new MarkupValidator($this->moduleContainer);
     }
 
     /**
@@ -117,19 +109,56 @@ class MarkupValidatorTest extends TestCase
         $this->mockMarkup($markup);
 
         if ($valid === true) {
-            $this->module->validateMarkup($markup);
+            $this->module->validateMarkup();
             $this->assertTrue(true);
             return;
         }
 
         try {
-            $this->module->validateMarkup($markup);
+            $this->module->validateMarkup();
         } catch (Exception $exception) {
             $this->assertTrue(true);
             return;
         }
 
         $this->assertTrue(false);
+    }
+
+    /**
+     * @dataProvider testOverrideReporterConfigurationWarningsDataProvdier
+     */
+    public function testOverrideReporterConfigurationWarnings($markup)
+    {
+        $this->mockMarkup($markup);
+
+        try {
+            $this->module->validateMarkup(array(
+                'ignoreWarnings' => false,
+            ));
+        } catch (Exception $exception) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->fail();
+    }
+
+    /**
+     * @dataProvider testOverrideReporterConfigurationErrorsDataProvdier
+     */
+    public function testOverrideReporterConfigurationErrors($markup, array $ignoredErrors)
+    {
+        $this->mockMarkup($markup);
+
+        try {
+            $this->module->validateMarkup(array(
+                'ignoredErrors' => $ignoredErrors,
+            ));
+        } catch (Exception $exception) {
+            $this->fail();
+        }
+
+        $this->assertTrue(true);
     }
 
     public function testValidateMarkupDataProvider()
@@ -196,6 +225,50 @@ HTML
 HTML
                 ,
                 false,
+            ),
+        );
+    }
+
+    public function testOverrideReporterConfigurationWarningsDataProvdier()
+    {
+        return array(
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                            <title>
+                                A page with a warning.
+                            </title>
+                        </head>
+                        <body>
+                            <form>
+                                <button role="button">
+                                </button>
+                            </form>
+                        </body>
+                    </html>
+HTML
+                ,
+            ),
+        );
+    }
+
+    public function testOverrideReporterConfigurationErrorsDataProvdier()
+    {
+        return array(
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                        </head>
+                    </html>
+HTML
+                ,
+                array(
+                    '/Element “head” is missing a required instance of child element “title”./',
+                ),
             ),
         );
     }
