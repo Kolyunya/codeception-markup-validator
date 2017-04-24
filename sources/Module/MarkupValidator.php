@@ -81,12 +81,16 @@ class MarkupValidator extends Module
 
     /**
      * Validates page markup via a markup validator.
+     * Allows to recongigure reporter component.
+     *
+     * @param array $reporterConfiguration Reporter configuration.
      */
-    public function validateMarkup()
+    public function validateMarkup(array $reporterConfiguration = array())
     {
         $markup = $this->provider->getMarkup();
-
         $messages = $this->validator->validate($markup);
+
+        $this->reporter->setConfiguration($reporterConfiguration);
         foreach ($messages as $message) {
             $this->reporter->report($message);
         }
