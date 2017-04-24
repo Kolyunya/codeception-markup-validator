@@ -56,13 +56,8 @@ class DefaultMarkupProvider implements MarkupProviderInterface
      */
     private function getMarkupFromPhpBrowser()
     {
-        $moduleName = 'PhpBrowser';
-        if (!$this->moduleContainer->hasModule($moduleName)) {
-            throw new Exception(sprintf('"%s" module is not enabled.', $moduleName));
-        }
-
         /* @var $phpBrowser PhpBrowser */
-        $phpBrowser = $this->moduleContainer->getModule($moduleName);
+        $phpBrowser = $this->getModule('PhpBrowser');
         $markup = $phpBrowser->_getResponseContent();
 
         return $markup;
@@ -75,15 +70,27 @@ class DefaultMarkupProvider implements MarkupProviderInterface
      */
     private function getMarkupFromWebDriver()
     {
-        $moduleName = 'WebDriver';
-        if (!$this->moduleContainer->hasModule($moduleName)) {
-            throw new Exception(sprintf('"%s" module is not enabled.', $moduleName));
-        }
-
         /* @var $webDriver WebDriver */
-        $webDriver = $this->moduleContainer->getModule($moduleName);
+        $webDriver = $this->getModule('WebDriver');
         $markup = $webDriver->webDriver->getPageSource();
 
         return $markup;
+    }
+
+    /**
+     * Returns a module instance by its name.
+     *
+     * @param string $name Module name.
+     * @return object Module instance.
+     */
+    private function getModule($name)
+    {
+        if (!$this->moduleContainer->hasModule($name)) {
+            throw new Exception(sprintf('«%s» module is not available.', $name));
+        }
+
+        $module = $this->moduleContainer->getModule($name);
+
+        return $module;
     }
 }
