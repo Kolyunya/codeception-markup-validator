@@ -35,7 +35,7 @@ class DefaultMarkupProviderTest extends TestCase
         ;
 
         $this->markupProvider = $this
-            ->getMockBuilder('Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider')
+            ->getMockBuilder(DefaultMarkupProvider::getClassName())
             ->setConstructorArgs(array(
                 $this->moduleContainer,
             ))
