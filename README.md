@@ -44,6 +44,32 @@ $I->amOnPage('/');
 $I->validateMarkup();
 ```
 
+If you need, you may override the module-wide message reporter configuration for each page individually like this:
+```php
+// Perform very strict checks for this particular page.
+$I->amOnPage('/foo/');
+$I->validateMarkup(array(
+    'ignoreWarnings' => false,
+));
+
+// Ignore those two errors just on this page.
+$I->amOnPage('/bar/');
+$I->validateMarkup(array(
+    'ignoredErrors' => array(
+        '/some error/',
+        '/another error/',
+    ),
+));
+
+// Ignore all errors just on this page.
+$I->amOnPage('/baz/');
+$I->validateMarkup(array(
+    'ignoredErrors' => array(
+        '/.*/',
+    ),
+));
+```
+
 ## Configuration
 The module does not require any configuration. The default setup will work if you have either [`PhpBrowser`](https://github.com/Codeception/Codeception/blob/2.2/src/Codeception/Module/PhpBrowser.php) or [`WebDriver`](https://github.com/Codeception/Codeception/blob/2.2/src/Codeception/Module/WebDriver.php) modules enabled.
 
