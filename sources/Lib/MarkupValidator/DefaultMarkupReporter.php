@@ -4,13 +4,14 @@ namespace Kolyunya\Codeception\Lib\MarkupValidator;
 
 use Exception;
 use Codeception\Util\Shared\Asserts;
+use Kolyunya\Codeception\Lib\Base\Component;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 
 /**
  * Default markup validation message reporter.
  */
-class DefaultMarkupReporter implements MarkupReporterInterface
+class DefaultMarkupReporter extends Component implements MarkupReporterInterface
 {
     const IGNORE_WARNINGS_CONFIG_KEY = 'ignoreWarnings';
 

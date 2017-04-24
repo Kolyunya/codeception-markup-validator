@@ -4,10 +4,11 @@ namespace Kolyunya\Codeception\Lib\MarkupValidator;
 
 use Exception;
 use GuzzleHttp\Client;
+use Kolyunya\Codeception\Lib\Base\Component;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidatorMessage;
 
-class W3CMarkupValidator implements MarkupValidatorInterface
+class W3CMarkupValidator extends Component implements MarkupValidatorInterface
 {
     const BASE_URI_CONFIG_KEY = 'baseUri';
 

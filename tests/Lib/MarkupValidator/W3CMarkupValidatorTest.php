@@ -20,7 +20,7 @@ class W3CMarkupValidatorTest extends TestCase
     public function setUp()
     {
         $this->validator = $this
-            ->getMockBuilder('Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator')
+            ->getMockBuilder(W3CMarkupValidator::getClassName())
             ->enableProxyingToOriginalMethods()
             ->getMock()
         ;
