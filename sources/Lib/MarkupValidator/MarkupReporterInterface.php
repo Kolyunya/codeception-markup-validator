@@ -2,12 +2,13 @@
 
 namespace Kolyunya\Codeception\Lib\MarkupValidator;
 
+use Kolyunya\Codeception\Lib\Base\ComponentInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 
 /**
  * An interface of a markup reported.
  */
-interface MarkupReporterInterface
+interface MarkupReporterInterface extends ComponentInterface
 {
     /**
      * Constructs a markup reported. Injects configuration parameters.
