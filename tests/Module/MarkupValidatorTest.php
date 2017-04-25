@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit_Framework_MockObject_MockObject;
 use Codeception\Lib\ModuleContainer;
 use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
 use Kolyunya\Codeception\Module\MarkupValidator;
 
 class MarkupValidatorTest extends TestCase
@@ -35,7 +36,16 @@ class MarkupValidatorTest extends TestCase
             ->getMock()
         ;
 
-        $this->module = new MarkupValidator($this->moduleContainer);
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'reporter' => array(
+                'class' => DefaultMarkupReporter::getClassName(),
+                'config' => array(
+                    'errorCountThreshold' => 0,
+                    'ignoreWarnings' => true,
+                    'ignoredErrors' => array(),
+                ),
+            ),
+        ));
     }
 
     /**
@@ -109,13 +119,17 @@ class MarkupValidatorTest extends TestCase
         $this->mockMarkup($markup);
 
         if ($valid === true) {
-            $this->module->validateMarkup();
+            $this->module->validateMarkup(array(
+                'ignoreWarnings' => false,
+            ));
             $this->assertTrue(true);
             return;
         }
 
         try {
-            $this->module->validateMarkup();
+            $this->module->validateMarkup(array(
+                'ignoreWarnings' => false,
+            ));
         } catch (Exception $exception) {
             $this->assertTrue(true);
             return;

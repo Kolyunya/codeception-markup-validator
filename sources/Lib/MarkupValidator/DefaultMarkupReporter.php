@@ -13,6 +13,8 @@ use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
  */
 class DefaultMarkupReporter extends Component implements MarkupReporterInterface
 {
+    const ERROR_COUNT_THRESHOLD_KEY = 'errorCountThreshold';
+
     const IGNORE_WARNINGS_CONFIG_KEY = 'ignoreWarnings';
 
     const IGNORED_ERRORS_CONFIG_KEY = 'ignoredErrors';
@@ -28,6 +30,7 @@ class DefaultMarkupReporter extends Component implements MarkupReporterInterface
      * @var array
      */
     protected $configuration = array(
+        self::ERROR_COUNT_THRESHOLD_KEY => 0,
         self::IGNORE_WARNINGS_CONFIG_KEY => true,
         self::IGNORED_ERRORS_CONFIG_KEY => array(),
     );
@@ -43,28 +46,73 @@ class DefaultMarkupReporter extends Component implements MarkupReporterInterface
     /**
      * {@inheritDoc}
      */
-    public function report(MarkupValidatorMessageInterface $message)
+    public function report(array $messages)
     {
-        $messageType = $message->getType();
+        $filteredMessages = $this->filterMesages($messages);
 
-        if ($messageType === MarkupValidatorMessageInterface::TYPE_UNDEFINED ||
-            $messageType === MarkupValidatorMessageInterface::TYPE_INFO
-        ) {
+        if ($this->belowErrorCountThreshold($filteredMessages) === true) {
             return;
         }
 
-        if ($messageType === MarkupValidatorMessageInterface::TYPE_WARNING &&
-            $this->ignoreWarnings() === true
-        ) {
-            return;
+        $report = implode("\n", $messages);
+        $this->fail($report);
+    }
+
+    /**
+     * Filters messages to report.
+     *
+     * @param array $messages Messages to filter.
+     *
+     * @return array Filtered messages.
+     */
+    private function filterMesages(array $messages)
+    {
+        $filteredMessages = array();
+
+        foreach ($messages as $message) {
+            /* @var $message MarkupValidatorMessageInterface */
+            $messageType = $message->getType();
+
+            if ($messageType === MarkupValidatorMessageInterface::TYPE_UNDEFINED ||
+                $messageType === MarkupValidatorMessageInterface::TYPE_INFO
+            ) {
+                continue;
+            }
+
+            if ($messageType === MarkupValidatorMessageInterface::TYPE_WARNING &&
+                $this->ignoreWarnings() === true
+            ) {
+                continue;
+            }
+
+            if ($this->ignoreError($message->getSummary()) === true) {
+                continue;
+            }
+
+            $filteredMessages[] = $message;
         }
 
-        if ($this->ignoreError($message->getSummary()) === true) {
-            return;
+        return $filteredMessages;
+    }
+
+    /**
+     * Returns a boolean indicating whether messages count
+     * is below the threshold or not.
+     *
+     * @param array $messages Messages to report about.
+     *
+     * @return boolean Whether messages count is below the threshold or not.
+     */
+    private function belowErrorCountThreshold(array $messages)
+    {
+        if (is_int($this->configuration[self::ERROR_COUNT_THRESHOLD_KEY]) === false) {
+            throw new Exception(sprintf('Invalid «%s» config key.', self::ERROR_COUNT_THRESHOLD_KEY));
         }
 
-        $messageString = $message->__toString();
-        $this->fail($messageString);
+        $threshold = $this->configuration[self::ERROR_COUNT_THRESHOLD_KEY];
+        $belowThreshold = count($messages) <= $threshold;
+
+        return $belowThreshold;
     }
 
     /**

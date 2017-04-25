@@ -33,16 +33,16 @@ class DefaultMarkupReporterTest extends TestCase
     /**
      * @dataProvider testMessageNotReportedDataProvider
      */
-    public function testMessageNotReported(MarkupValidatorMessageInterface $message)
+    public function testMessageNotReported($messages)
     {
-        $this->reporter->report($message);
+        $this->reporter->report($messages);
         $this->assertTrue(true);
     }
 
     /**
      * @dataProvider testMessageReportedDataProvider
      */
-    public function testMessageReported(MarkupValidatorMessageInterface $message, $report)
+    public function testMessageReported($messages, $report)
     {
         $this->reporter->setConfiguration(array(
             'ignoreWarnings' => false,
@@ -50,7 +50,7 @@ class DefaultMarkupReporterTest extends TestCase
         ));
 
         try {
-            $this->reporter->report($message);
+            $this->reporter->report($messages);
         } catch (Exception $exception) {
             $exceptionMessage = $exception->getMessage();
             $this->assertTrue(is_string($exceptionMessage));
@@ -59,6 +59,19 @@ class DefaultMarkupReporterTest extends TestCase
         }
 
         $this->fail('Message was not reported.');
+    }
+
+    /**
+     * @dataProvider testerrorCountThresholdDataProvider
+     */
+    public function testerrorCountThreshold($messages, $threshold)
+    {
+        $this->reporter->setConfiguration(array(
+            'errorCountThreshold' => $threshold,
+        ));
+
+        $this->reporter->report($messages);
+        $this->assertTrue(true);
     }
 
     public function testIgnoreWarnings()
@@ -70,14 +83,14 @@ class DefaultMarkupReporterTest extends TestCase
         $warning = new MarkupValidatorMessage();
         $warning->setType(MarkupValidatorMessageInterface::TYPE_WARNING);
 
-        $this->reporter->report($warning);
+        $this->reporter->report(array($warning));
         $this->assertTrue(true);
     }
 
     /**
      * @dataProvider testIgnoredErrorsDataProvider
      */
-    public function testIgnoredErrors($message, $ignore, $isIgnored)
+    public function testIgnoredErrors($messages, $ignore, $isIgnored)
     {
         $this->reporter->setConfiguration(array(
             'ignoredErrors' => array(
@@ -86,19 +99,32 @@ class DefaultMarkupReporterTest extends TestCase
         ));
 
         if ($isIgnored === true) {
-            $this->reporter->report($message);
+            $this->reporter->report($messages);
             $this->assertTrue(true);
             return;
         }
 
         try {
-            $this->reporter->report($message);
+            $this->reporter->report($messages);
         } catch (Exception $exception) {
             $this->assertTrue(true);
             return;
         }
 
         $this->fail();
+    }
+
+    public function testInvaliderrorCountThresholdConfig()
+    {
+        $this->setExpectedException('Exception', 'Invalid «errorCountThreshold» config key.');
+
+        $warning = new MarkupValidatorMessage();
+        $warning->setType(MarkupValidatorMessageInterface::TYPE_WARNING);
+
+        $this->reporter->setConfiguration(array(
+            'errorCountThreshold' => true,
+        ));
+        $this->reporter->report(array($warning));
     }
 
     public function testInvalidIgnoreWarningsConfig()
@@ -114,7 +140,7 @@ class DefaultMarkupReporterTest extends TestCase
                 'bar' => true,
             ),
         ));
-        $this->reporter->report($warning);
+        $this->reporter->report(array($warning));
     }
 
     public function testInvalidIgnoreErrorsConfig()
@@ -127,19 +153,55 @@ class DefaultMarkupReporterTest extends TestCase
         $this->reporter->setConfiguration(array(
             'ignoredErrors' => false,
         ));
-        $this->reporter->report($error);
+        $this->reporter->report(array($error));
+    }
+
+    public function testerrorCountThresholdDataProvider()
+    {
+        return array(
+            array(
+                array(
+                ),
+                0,
+            ),
+            array(
+                array(
+                    new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR),
+                ),
+                1,
+            ),
+            array(
+                array(
+                    new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR),
+                    new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR),
+                ),
+                2,
+            ),
+            array(
+                array(
+                    new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR),
+                    new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR),
+                    new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR),
+                ),
+                5,
+            ),
+        );
     }
 
     public function testMessageNotReportedDataProvider()
     {
         return array(
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_UNDEFINED)
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_UNDEFINED)
+                ),
             ),
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_INFO)
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_INFO)
+                ),
             ),
         );
     }
@@ -148,19 +210,23 @@ class DefaultMarkupReporterTest extends TestCase
     {
         return array(
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_WARNING)
-                    ->setSummary('Warning text.')
-                    ->setMarkup('<h1></h1>')
-                ,
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_WARNING)
+                        ->setSummary('Warning text.')
+                        ->setMarkup('<h1></h1>')
+                    ,
+                ),
                 'Warning text.',
             ),
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
-                    ->setSummary('Error text.')
-                    ->setMarkup('<title></title>')
-                ,
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                        ->setSummary('Error text.')
+                        ->setMarkup('<title></title>')
+                    ,
+                ),
                 'Error text.',
             ),
         );
@@ -170,33 +236,41 @@ class DefaultMarkupReporterTest extends TestCase
     {
         return array(
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
-                    ->setSummary('Some cryptic error message.')
-                ,
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                        ->setSummary('Some cryptic error message.')
+                    ,
+                ),
                 '/cryptic error/',
                 true,
             ),
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
-                    ->setSummary('Case insensitive error message.')
-                ,
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                        ->setSummary('Case insensitive error message.')
+                    ,
+                ),
                 '/case insensitive error message./i',
                 true,
             ),
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
-                    ->setSummary('Текст ошибки в UTF-8.')
-                ,
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                        ->setSummary('Текст ошибки в UTF-8.')
+                    ,
+                ),
                 '/Текст ошибки в UTF-8./u',
                 true,
             ),
             array(
-                (new MarkupValidatorMessage())
-                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
-                ,
+                array(
+                    (new MarkupValidatorMessage())
+                        ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                    ,
+                ),
                 '/error/',
                 false,
             ),
