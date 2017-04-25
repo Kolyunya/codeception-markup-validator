@@ -67,9 +67,8 @@ class DefaultMarkupReporterTest extends TestCase
             'ignoreWarnings' => true,
         ));
 
-        $warning = new MarkupValidatorMessage(
-            MarkupValidatorMessageInterface::TYPE_WARNING
-        );
+        $warning = new MarkupValidatorMessage();
+        $warning->setType(MarkupValidatorMessageInterface::TYPE_WARNING);
 
         $this->reporter->report($warning);
         $this->assertTrue(true);
@@ -106,7 +105,8 @@ class DefaultMarkupReporterTest extends TestCase
     {
         $this->setExpectedException('Exception', 'Invalid «ignoreWarnings» config key.');
 
-        $warning = new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_WARNING);
+        $warning = new MarkupValidatorMessage();
+        $warning->setType(MarkupValidatorMessageInterface::TYPE_WARNING);
 
         $this->reporter->setConfiguration(array(
             'ignoreWarnings' => array(
@@ -121,7 +121,8 @@ class DefaultMarkupReporterTest extends TestCase
     {
         $this->setExpectedException('Exception', 'Invalid «ignoredErrors» config key.');
 
-        $error = new MarkupValidatorMessage(MarkupValidatorMessageInterface::TYPE_ERROR);
+        $error = new MarkupValidatorMessage();
+        $error->setType(MarkupValidatorMessageInterface::TYPE_ERROR);
 
         $this->reporter->setConfiguration(array(
             'ignoredErrors' => false,
@@ -133,14 +134,12 @@ class DefaultMarkupReporterTest extends TestCase
     {
         return array(
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_UNDEFINED
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_UNDEFINED)
             ),
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_INFO
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_INFO)
             ),
         );
     }
@@ -149,21 +148,19 @@ class DefaultMarkupReporterTest extends TestCase
     {
         return array(
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_WARNING,
-                    'Warning text.',
-                    null,
-                    '<h1></h1>'
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_WARNING)
+                    ->setSummary('Warning text.')
+                    ->setMarkup('<h1></h1>')
+                ,
                 'Warning text.',
             ),
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_ERROR,
-                    'Error text.',
-                    null,
-                    '<title></title>'
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                    ->setSummary('Error text.')
+                    ->setMarkup('<title></title>')
+                ,
                 'Error text.',
             ),
         );
@@ -173,33 +170,33 @@ class DefaultMarkupReporterTest extends TestCase
     {
         return array(
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_ERROR,
-                    'Some cryptic error message.'
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                    ->setSummary('Some cryptic error message.')
+                ,
                 '/cryptic error/',
                 true,
             ),
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_ERROR,
-                    'Case insensitive error message.'
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                    ->setSummary('Case insensitive error message.')
+                ,
                 '/case insensitive error message./i',
                 true,
             ),
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_ERROR,
-                    'Текст ошибки в UTF-8.'
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                    ->setSummary('Текст ошибки в UTF-8.')
+                ,
                 '/Текст ошибки в UTF-8./u',
                 true,
             ),
             array(
-                new MarkupValidatorMessage(
-                    MarkupValidatorMessageInterface::TYPE_ERROR
-                ),
+                (new MarkupValidatorMessage())
+                    ->setType(MarkupValidatorMessageInterface::TYPE_ERROR)
+                ,
                 '/error/',
                 false,
             ),
