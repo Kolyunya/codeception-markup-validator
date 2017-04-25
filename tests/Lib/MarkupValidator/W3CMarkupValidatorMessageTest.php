@@ -25,13 +25,15 @@ class W3CMarkupValidatorMessageTest extends TestCase
     /**
      * @dataProvider testConstructorDataProvider
      */
-    public function testConstructor($data, $type, $summary, $details, $markup)
+    public function testConstructor($data, $type, $summary, $details, $firstLineNumber, $lastLineNumber, $markup)
     {
         $message = new W3CMarkupValidatorMessage($data);
 
         $this->assertEquals($message->getType(), $type);
         $this->assertEquals($message->getSummary(), $summary);
         $this->assertEquals($message->getDetails(), $details);
+        $this->assertEquals($message->getFirstLineNumber(), $firstLineNumber);
+        $this->assertEquals($message->getLastLineNumber(), $lastLineNumber);
         $this->assertEquals($message->getMarkup(), $markup);
     }
 
@@ -52,6 +54,8 @@ class W3CMarkupValidatorMessageTest extends TestCase
                 'type' => MarkupValidatorMessageInterface::TYPE_ERROR,
                 'summary' => 'Element “head” is missing a required instance of child element “title”.',
                 'details' => null,
+                'firstLineNumber' => null,
+                'lastLineNumber' => 4,
                 'markup' => '</head>\n',
             ),
             array(
@@ -69,6 +73,8 @@ class W3CMarkupValidatorMessageTest extends TestCase
                 'type' => MarkupValidatorMessageInterface::TYPE_WARNING,
                 'summary' => 'The “button” role is unnecessary for element “button”.',
                 'details' => null,
+                'firstLineNumber' => null,
+                'lastLineNumber' => 7,
                 'markup' => ' <button role=\"button\">\n ',
             ),
             array(
@@ -86,12 +92,15 @@ class W3CMarkupValidatorMessageTest extends TestCase
                 'type' => MarkupValidatorMessageInterface::TYPE_INFO,
                 'summary' => 'Informative message.',
                 'details' => null,
+                'firstLineNumber' => null,
+                'lastLineNumber' => 7,
                 'markup' => null,
             ),
             array(
                 'data' => array(
                     'type' => 'info',
-                    'lastLine' => 7,
+                    'firstLine' => 5,
+                    'lastLine' => 9,
                     'lastColumn' => 50,
                     'firstColumn' => 29,
                     'subType' => 'undefined',
@@ -103,12 +112,15 @@ class W3CMarkupValidatorMessageTest extends TestCase
                 'type' => MarkupValidatorMessageInterface::TYPE_INFO,
                 'summary' => 'Informative message.',
                 'details' => null,
+                'firstLineNumber' => 5,
+                'lastLineNumber' => 9,
                 'markup' => '<some-markup></some-markup>',
             ),
             array(
                 'data' => array(
                     'type' => null,
-                    'lastLine' => 7,
+                    'firstLine' => 30,
+                    'lastLine' => 40,
                     'lastColumn' => 50,
                     'firstColumn' => 29,
                     'subType' => null,
@@ -120,6 +132,8 @@ class W3CMarkupValidatorMessageTest extends TestCase
                 'type' => MarkupValidatorMessageInterface::TYPE_UNDEFINED,
                 'summary' => 'Undefined message.',
                 'details' => null,
+                'firstLineNumber' => 30,
+                'lastLineNumber' => 40,
                 'markup' => null,
             ),
             array(
@@ -128,6 +142,8 @@ class W3CMarkupValidatorMessageTest extends TestCase
                 'type' => MarkupValidatorMessageInterface::TYPE_UNDEFINED,
                 'summary' => null,
                 'details' => null,
+                'firstLineNumber' => null,
+                'lastLineNumber' => null,
                 'markup' => null,
             ),
         );

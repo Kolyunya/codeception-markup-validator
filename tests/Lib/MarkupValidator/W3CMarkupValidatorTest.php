@@ -43,6 +43,8 @@ class W3CMarkupValidatorTest extends TestCase
             $this->assertEquals($message->getType(), $messageData['type']);
             $this->assertEquals($message->getSummary(), $messageData['summary']);
             $this->assertEquals($message->getDetails(), $messageData['details']);
+            $this->assertEquals($message->getFirstLineNumber(), $messageData['firstLineNumber']);
+            $this->assertEquals($message->getLastLineNumber(), $messageData['lastLineNumber']);
             $this->assertContains($messageData['markup'], $message->getMarkup());
         }
     }
@@ -91,6 +93,8 @@ HTML
                         'summary' => 'Element “head” is missing a required instance of child element “title”.',
                         'details' => null,
                         'markup' => '</head>',
+                        'firstLineNumber' => null,
+                        'lastLineNumber' => 4,
                     ),
                 ),
             ),
@@ -115,12 +119,16 @@ HTML
                         'summary' => 'Element “head” is missing a required instance of child element “title”.',
                         'details' => null,
                         'markup' => '</head>',
+                        'firstLineNumber' => null,
+                        'lastLineNumber' => 4,
                     ),
                     array(
                         'type' => MarkupValidatorMessageInterface::TYPE_WARNING,
                         'summary' => 'The “button” role is unnecessary for element “button”.',
                         'details' => null,
                         'markup' => '<button role="button">',
+                        'firstLineNumber' => null,
+                        'lastLineNumber' => 7,
                     ),
                 ),
             ),

@@ -10,6 +10,11 @@ use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 class MarkupValidatorMessage implements MarkupValidatorMessageInterface
 {
     /**
+     * Placeholder for unavailable message data.
+     */
+    const UNAVAILABLE_DATA_PLACEHOLDER = 'unavailable';
+
+    /**
      * Message type.
      *
      * @var string
@@ -31,6 +36,20 @@ class MarkupValidatorMessage implements MarkupValidatorMessageInterface
     protected $details;
 
     /**
+     * A number of the first related markup line.
+     *
+     * @var integer
+     */
+    protected $firstLineNumber;
+
+    /**
+     * A number of the last related markup line.
+     *
+     * @var integer
+     */
+    protected $lastLineNumber;
+
+    /**
      * Related markup.
      *
      * @var string
@@ -38,18 +57,13 @@ class MarkupValidatorMessage implements MarkupValidatorMessageInterface
     protected $markup;
 
     /**
-     * Constructs a markup validator message.
+     * Constructs a new message. Sets message type.
+     *
+     * @param string $type Message type.
      */
-    public function __construct(
-        $type = self::TYPE_UNDEFINED,
-        $summary = null,
-        $details = null,
-        $markup = null
-    ) {
-        $this->type = $type;
-        $this->summary = $summary;
-        $this->details = $details;
-        $this->markup = $markup;
+    public function __construct($type = self::TYPE_UNDEFINED)
+    {
+        $this->setType($type);
     }
 
     /**
@@ -58,11 +72,31 @@ class MarkupValidatorMessage implements MarkupValidatorMessageInterface
     public function __toString()
     {
         return vsprintf($this->getStringTemplate(), array(
-            $this->getType() ?: 'unavailable',
-            $this->getSummary() ?: 'unavailable',
-            $this->getDetails() ?: 'unavailable',
-            $this->getMarkup() ?: 'unavailable',
+            $this->getType(),
+            $this->getSummary() ?: self::UNAVAILABLE_DATA_PLACEHOLDER,
+            $this->getDetails() ?: self::UNAVAILABLE_DATA_PLACEHOLDER,
+            $this->getFirstLineNumber() ?: self::UNAVAILABLE_DATA_PLACEHOLDER,
+            $this->getLastLineNumber() ?: self::UNAVAILABLE_DATA_PLACEHOLDER,
+            $this->getMarkup() ?: self::UNAVAILABLE_DATA_PLACEHOLDER,
         ));
+    }
+
+    /**
+     * Sets message type.
+     *
+     * @param string $type Message type.
+     *
+     * @return self Returns self.
+     */
+    public function setType($type)
+    {
+        if ($type === null) {
+            $type = self::TYPE_UNDEFINED;
+        }
+
+        $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -74,6 +108,20 @@ class MarkupValidatorMessage implements MarkupValidatorMessageInterface
     }
 
     /**
+     * Sets message summary.
+     *
+     * @param string $summary Message summary.
+     *
+     * @return self Returns self.
+     */
+    public function setSummary($summary)
+    {
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getSummary()
@@ -82,11 +130,83 @@ class MarkupValidatorMessage implements MarkupValidatorMessageInterface
     }
 
     /**
+     * Sets message details.
+     *
+     * @param string $details Message details.
+     *
+     * @return self Returns self.
+     */
+    public function setDetails($details)
+    {
+        $this->details = $details;
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getDetails()
     {
         return $this->details;
+    }
+
+    /**
+     * Sets first line number.
+     *
+     * @param integer $firstLineNumber First line number.
+     *
+     * @return self Returns self.
+     */
+    public function setFirstLineNumber($firstLineNumber)
+    {
+        $this->firstLineNumber = $firstLineNumber;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFirstLineNumber()
+    {
+        return $this->firstLineNumber;
+    }
+
+    /**
+     * Sets last line number.
+     *
+     * @param integer $lastLineNumber Last line number.
+     *
+     * @return self Returns self.
+     */
+    public function setLastLineNumber($lastLineNumber)
+    {
+        $this->lastLineNumber = $lastLineNumber;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getLastLineNumber()
+    {
+        return $this->lastLineNumber;
+    }
+
+    /**
+     * Sets markup.
+     *
+     * @param string $markup Markup.
+     *
+     * @return self Returns self.
+     */
+    public function setMarkup($markup)
+    {
+        $this->markup = $markup;
+
+        return $this;
     }
 
     /**
@@ -110,6 +230,8 @@ Markup validator message:
 Type: %s
 Summary: %s
 Details: %s
+First Line: %s
+Last Line: %s
 Markup: %s
 
 TXT
