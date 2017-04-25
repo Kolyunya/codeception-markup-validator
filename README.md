@@ -61,11 +61,15 @@ $I->validateMarkup(array(
     ),
 ));
 
-// Ignore all errors just on this page.
-$I->amOnPage('/baz/');
+// Set error count threshold, do not ignore warnings
+// but ignore some errors on this page.
+$I->amOnPage('/quux/');
 $I->validateMarkup(array(
-    'ignoredErrors' => array(
-        '/.*/',
+    'errorCountThreshold' => 10,
+    'ignoreWarnings' => false,
+    'ignoredErros' => array(
+        '/this error/',
+        '/that error/',
     ),
 ));
 ```
@@ -93,6 +97,7 @@ modules:
             reporter:
                 class: Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter
                 config:
+                    errorCountThreshold: 10
                     ignoreWarnings: true
                     ignoredErrors:
                         - '/some error/'

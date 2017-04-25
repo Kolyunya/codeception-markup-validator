@@ -5,7 +5,6 @@ namespace Kolyunya\Codeception\Module;
 use Exception;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
-use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
@@ -31,18 +30,12 @@ class MarkupValidator extends Module
     protected $config = array(
         self::PROVIDER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::VALIDATOR_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::REPORTER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(
-                DefaultMarkupReporter::IGNORED_ERRORS_CONFIG_KEY => array(),
-                DefaultMarkupReporter::IGNORE_WARNINGS_CONFIG_KEY => false,
-            ),
         ),
     );
 
@@ -91,9 +84,7 @@ class MarkupValidator extends Module
         $messages = $this->validator->validate($markup);
 
         $this->reporter->setConfiguration($reporterConfiguration);
-        foreach ($messages as $message) {
-            $this->reporter->report($message);
-        }
+        $this->reporter->report($messages);
 
         // Validation succeeded.
         $this->assertTrue(true);
