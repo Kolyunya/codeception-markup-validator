@@ -20,7 +20,7 @@ interface MarkupReporterInterface extends ComponentInterface
     /**
      * Reports about markup validation messages.
      *
-     * @param MarkupValidatorMessageInterface $message Message to report about.
+     * @param MarkupValidatorMessageInterface[] $messages All message to report about.
      */
-    public function report(MarkupValidatorMessageInterface $message);
+    public function report(array $messages);
 }
