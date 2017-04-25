@@ -22,6 +22,8 @@ class W3CMarkupValidatorMessage extends MarkupValidatorMessage implements Markup
 
         $this->initializeType($data);
         $this->initializeSummary($data);
+        $this->initializeFirstLineNumber($data);
+        $this->initializeLastLineNumber($data);
         $this->initializeMarkup($data);
     }
 
@@ -57,7 +59,31 @@ class W3CMarkupValidatorMessage extends MarkupValidatorMessage implements Markup
     private function initializeSummary(array $data)
     {
         if (isset($data['message']) === true) {
-            $this->summary = $data['message'];
+            $this->setSummary($data['message']);
+        }
+    }
+
+    /**
+     * Initializes first line number.
+     *
+     * @param array $data Message data.
+     */
+    private function initializeFirstLineNumber(array $data)
+    {
+        if (isset($data['firstLine']) === true) {
+            $this->setFirstLineNumber($data['firstLine']);
+        }
+    }
+
+    /**
+     * Initializes last line number.
+     *
+     * @param array $data Message data.
+     */
+    private function initializeLastLineNumber(array $data)
+    {
+        if (isset($data['lastLine']) === true) {
+            $this->setLastLineNumber($data['lastLine']);
         }
     }
 
@@ -69,7 +95,7 @@ class W3CMarkupValidatorMessage extends MarkupValidatorMessage implements Markup
     private function initializeMarkup(array $data)
     {
         if (isset($data['extract']) === true) {
-            $this->markup = $data['extract'];
+            $this->setMarkup($data['extract']);
         }
     }
 }
