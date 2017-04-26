@@ -5,7 +5,8 @@ namespace Kolyunya\Codeception\Tests\Lib\Base;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\Base\Component;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider;
-use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
+use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
+use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
 
 class ComponentTest extends TestCase
@@ -44,8 +45,12 @@ class ComponentTest extends TestCase
                 DefaultMarkupProvider::getClassName(),
             ),
             array(
-                'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
-                DefaultMarkupReporter::getClassName(),
+                'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
+                DefaultMessageFilter::getClassName(),
+            ),
+            array(
+                'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter',
+                DefaultMessagePrinter::getClassName(),
             ),
             array(
                 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',

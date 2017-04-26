@@ -8,8 +8,9 @@ use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Kolyunya\Codeception\Lib\Base\ComponentInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
-use Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
+use Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface;
+use Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface;
 
 /**
  * A module which validates page markup via a markup validator.
@@ -27,8 +28,8 @@ class MarkupValidator extends Module
     const VALIDATOR_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface';
     const VALIDATOR_CONFIG_KEY = 'validator';
 
-    const REPORTER_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface';
-    const REPORTER_CONFIG_KEY = 'reporter';
+    const FILTER_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface';
+    const FILTER_CONFIG_KEY = 'filter';
 
     const PRINTER_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface';
     const PRINTER_CONFIG_KEY = 'printer';
@@ -43,8 +44,11 @@ class MarkupValidator extends Module
         self::VALIDATOR_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
         ),
-        self::REPORTER_CONFIG_KEY => array(
-            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
+        self::FILTER_CONFIG_KEY => array(
+            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
+        ),
+        self::PRINTER_CONFIG_KEY => array(
+            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter',
         ),
     );
 
@@ -53,21 +57,28 @@ class MarkupValidator extends Module
      *
      * @var MarkupProviderInterface
      */
-    private $provider;
+    private $markupProvider;
 
     /**
      * Markup validator.
      *
      * @var MarkupValidatorInterface
      */
-    private $validator;
+    private $markupValidator;
 
     /**
-     * Markup validation message reporter.
+     * Message filter.
      *
-     * @var MarkupReporterInterface
+     * @var MessageFilterInterface
      */
-    private $reporter;
+    private $messageFilter;
+
+    /**
+     * Message printer.
+     *
+     * @var MessagePrinterInterface
+     */
+    private $messagePrinter;
 
     /**
      * {@inheritDoc}
@@ -76,24 +87,30 @@ class MarkupValidator extends Module
     {
         parent::__construct($moduleContainer, $config);
 
-        $this->initializeProvider();
-        $this->initializeValidator();
-        $this->initializeReporter();
+        $this->initializeMarkupProvider();
+        $this->initializeMarkupValidator();
+        $this->initializeMessageFilter();
+        $this->initializeMessagePrinter();
     }
 
     /**
      * Validates page markup via a markup validator.
-     * Allows to recongigure reporter component.
+     * Allows to recongigure message filter component.
      *
-     * @param array $reporterConfiguration Reporter configuration.
+     * @param array $messageFilterConfiguration Message filter configuration.
      */
-    public function validateMarkup(array $reporterConfiguration = array())
+    public function validateMarkup(array $messageFilterConfiguration = array())
     {
-        $markup = $this->provider->getMarkup();
-        $messages = $this->validator->validate($markup);
+        $markup = $this->markupProvider->getMarkup();
+        $messages = $this->markupValidator->validate($markup);
 
-        $this->reporter->setConfiguration($reporterConfiguration);
-        $this->reporter->report($messages);
+        $this->messageFilter->setConfiguration($messageFilterConfiguration);
+        $filteredMessages = $this->messageFilter->filterMessages($messages);
+
+        if (empty($filteredMessages) === false) {
+            $messagesString = $this->messagePrinter->getMessagesString($filteredMessages);
+            $this->fail($messagesString);
+        }
 
         // Validation succeeded.
         $this->assertTrue(true);
@@ -102,9 +119,9 @@ class MarkupValidator extends Module
     /**
      * Initializes markup provider.
      */
-    private function initializeProvider()
+    private function initializeMarkupProvider()
     {
-        $this->provider = $this->instantiateComponent(
+        $this->markupProvider = $this->instantiateComponent(
             self::PROVIDER_CONFIG_KEY,
             self::PROVIDER_INTERFACE,
             array(
@@ -116,22 +133,33 @@ class MarkupValidator extends Module
     /**
      * Initializes markup validator.
      */
-    private function initializeValidator()
+    private function initializeMarkupValidator()
     {
-        $this->validator = $this->instantiateComponent(
+        $this->markupValidator = $this->instantiateComponent(
             self::VALIDATOR_CONFIG_KEY,
             self::VALIDATOR_INTERFACE
         );
     }
 
     /**
-     * Initializes markup reporter.
+     * Initializes message filter.
      */
-    private function initializeReporter()
+    private function initializeMessageFilter()
     {
-        $this->reporter = $this->instantiateComponent(
-            self::REPORTER_CONFIG_KEY,
-            self::REPORTER_INTERFACE
+        $this->messageFilter = $this->instantiateComponent(
+            self::FILTER_CONFIG_KEY,
+            self::FILTER_INTERFACE
+        );
+    }
+
+    /**
+     * Initializes message printer.
+     */
+    private function initializeMessagePrinter()
+    {
+        $this->messagePrinter = $this->instantiateComponent(
+            self::PRINTER_CONFIG_KEY,
+            self::PRINTER_INTERFACE
         );
     }
 
