@@ -32,14 +32,6 @@ class DefaultMessageFilter extends Component implements MessageFilterInterface
     /**
      * {@inheritDoc}
      */
-    public function __construct(array $configuration = array())
-    {
-        parent::__construct($configuration);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function filterMessages(array $messages)
     {
         $filteredMessages = array();
@@ -96,9 +88,9 @@ class DefaultMessageFilter extends Component implements MessageFilterInterface
     }
 
     /**
-     * Returns a boolean indicating whether the reporter ignores warnings or not.
+     * Returns a boolean indicating whether the filter ignores warnings or not.
      *
-     * @return bool Whether the reporter ignores warnings or not.
+     * @return bool Whether the filter ignores warnings or not.
      */
     private function ignoreWarnings()
     {

@@ -28,7 +28,7 @@ abstract class Component implements ComponentInterface
      *
      * @param array $configuration Component configuration array.
      */
-    public function __construct(array $configuration)
+    public function __construct(array $configuration = array())
     {
         $this->setConfiguration($configuration);
     }
