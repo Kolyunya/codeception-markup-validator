@@ -57,7 +57,12 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidProvider()
     {
-        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «provider».');
+        $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
+        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+            'stdClass',
+            'provider',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface',
+        )));
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'provider' => array(
@@ -68,7 +73,12 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidValidator()
     {
-        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «validator».');
+        $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
+        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+            'stdClass',
+            'validator',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface',
+        )));
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'validator' => array(
@@ -79,7 +89,12 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidReporter()
     {
-        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «reporter».');
+        $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
+        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+            'stdClass',
+            'reporter',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface',
+        )));
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'reporter' => array(
