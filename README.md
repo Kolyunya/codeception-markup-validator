@@ -44,7 +44,7 @@ $I->amOnPage('/');
 $I->validateMarkup();
 ```
 
-If you need, you may override the module-wide message reporter configuration for each page individually like this:
+If you need, you may override module-wide message filter configuration for each page individually like this:
 ```php
 // Perform very strict checks for this particular page.
 $I->amOnPage('/foo/');
@@ -77,16 +77,10 @@ $I->validateMarkup(array(
 ## Configuration
 The module does not require any configuration. The default setup will work if you have either [`PhpBrowser`](https://github.com/Codeception/Codeception/blob/2.2/src/Codeception/Module/PhpBrowser.php) or [`WebDriver`](https://github.com/Codeception/Codeception/blob/2.2/src/Codeception/Module/WebDriver.php) modules enabled.
 
-Nevertheless the module is fully-configurable. It consist of three major components: [`provider`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/MarkupProviderInterface.php) with provides markup to validate, [`validator`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/MarkupValidatorInterface.php) which performs actual markup validation and [`reporter`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/MarkupReporterInterface.php) which reports about validation messages. You may configure each of the components with a custom implementation.
+Nevertheless the module is fully-configurable and hackable. It consist of four major components: [`provider`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/MarkupProviderInterface.php) with provides markup to validate, [`validator`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/MarkupValidatorInterface.php) which performs actual markup validation, [`filter`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/MessageFilterInterface.php) which filters messages received from the validator and  [`printer`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/MessagePrinterInterface.php) which prints messages received from the validator. You may configure each of the components with a custom implementation.
 
 ### Provider
 The module may be configured with a custom `provider` which will provide the markup to the `validator`. The [`default provider`](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/DefaultMarkupProvider.php) tries to obtain markup from the `PhpBrowser` and `WebDriver` modules.
-
-### Validator
-The module may be configured with a custom `validator` which will validate markup received from the `provider`. The [default validator](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/W3CMarkupValidator.php) uses the [W3C Markup Validation Service API](https://validator.w3.org/docs/api.html).
-
-### Reporter
-The module may be configured with a custom `reporter` which will report about messages received from the `validator`. You may implement you own reporter or tweak a [default one](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/DefaultMarkupReporter.php).
 ```yaml
 class_name: AcceptanceTester
 modules:
@@ -94,8 +88,34 @@ modules:
         - PhpBrowser:
             url: 'http://localhost/'
         - Kolyunya\Codeception\Module\MarkupValidator:
-            reporter:
-                class: Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter
+            provider:
+                class: Acme\Tests\CustomMarkupProvider
+```
+
+### Validator
+The module may be configured with a custom `validator` which will validate markup received from the `provider`. The [default validator](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/W3CMarkupValidator.php) uses the [W3C Markup Validation Service API](https://validator.w3.org/docs/api.html).
+```yaml
+class_name: AcceptanceTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: 'http://localhost/'
+        - Kolyunya\Codeception\Module\MarkupValidator:
+            validator:
+                class: Acme\Tests\CustomMarkupValidator
+```
+
+### Filter
+The module may be configured with a custom `filter` which will report about messages received from the `validator`. You may implement you own filter or tweak a [default one](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/DefaultMessageFilter.php).
+```yaml
+class_name: AcceptanceTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: 'http://localhost/'
+        - Kolyunya\Codeception\Module\MarkupValidator:
+            filter:
+                class: Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter
                 config:
                     errorCountThreshold: 10
                     ignoreWarnings: true
@@ -104,5 +124,18 @@ modules:
                         - '/another error/'
 ```
 
+### Printer
+The module may be configured with a custom `printer` which defines how messages received from the validator are printed. The [default printer](https://github.com/Kolyunya/codeception-markup-validator/blob/master/sources/Lib/MarkupValidator/DefaultMessagePrinter.php) prints message type, summary, details, first line number, last line number and related markup.
+```yaml
+class_name: AcceptanceTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: 'http://localhost/'
+        - Kolyunya\Codeception\Module\MarkupValidator:
+            printer:
+                class: Acme\Tests\CustomMessagePrinter
+```
+
 ## Contributing
-If you found a bug or have a feature request feel free to [open an issue](https://github.com/Kolyunya/codeception-markup-validator/issues/new). If you want to send a pull request, backward-compatible changes should target the `master` branch while breaking changes - next major branch.
+If you found a bug or have a feature request feel free to [open an issue](https://github.com/Kolyunya/codeception-markup-validator/issues/new). If you want to send a pull request, backward-compatible changes should target the `master` branch while breaking changes - the next major version branch.

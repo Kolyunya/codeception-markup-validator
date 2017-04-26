@@ -2,13 +2,14 @@
 
 namespace Kolyunya\Codeception\Lib\MarkupValidator;
 
+use Kolyunya\Codeception\Lib\Base\Component;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface;
 
 /**
  * Default markup validator message printer.
  */
-class DefaultMessagePrinter implements MessagePrinterInterface
+class DefaultMessagePrinter extends Component implements MessagePrinterInterface
 {
     /**
      * Placeholder for unavailable message data.

@@ -6,7 +6,7 @@ use Exception;
 use PHPUnit_Framework_MockObject_MockObject;
 use Codeception\Lib\ModuleContainer;
 use PHPUnit\Framework\TestCase;
-use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
+use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
 use Kolyunya\Codeception\Module\MarkupValidator;
 
 class MarkupValidatorTest extends TestCase
@@ -37,8 +37,8 @@ class MarkupValidatorTest extends TestCase
         ;
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
-            'reporter' => array(
-                'class' => DefaultMarkupReporter::getClassName(),
+            'filter' => array(
+                'class' => DefaultMessageFilter::getClassName(),
                 'config' => array(
                     'errorCountThreshold' => 0,
                     'ignoreWarnings' => true,
@@ -87,17 +87,17 @@ class MarkupValidatorTest extends TestCase
         ));
     }
 
-    public function testInvalidReporter()
+    public function testInvalidFilter()
     {
         $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
         $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
             'stdClass',
-            'reporter',
-            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface',
+            'filter',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface',
         )));
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
-            'reporter' => array(
+            'filter' => array(
                 'class' => 'stdClass',
             ),
         ));
@@ -105,10 +105,10 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidComponentClass()
     {
-        $this->setExpectedException('Exception', 'Invalid class configuration of component «reporter».');
+        $this->setExpectedException('Exception', 'Invalid class configuration of component «filter».');
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
-            'reporter' => array(
+            'filter' => array(
                 'class' => false,
             ),
         ));
@@ -116,11 +116,11 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidComponentConfig()
     {
-        $this->setExpectedException('Exception', 'Invalid configuration of component «reporter».');
+        $this->setExpectedException('Exception', 'Invalid configuration of component «filter».');
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
-            'reporter' => array(
-                'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
+            'filter' => array(
+                'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
                 'config' => 'configuration-parameter',
             ),
         ));
@@ -154,9 +154,9 @@ class MarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testOverrideReporterConfigurationWarningsDataProvdier
+     * @dataProvider testOverrideFilterConfigurationWarningsDataProvdier
      */
-    public function testOverrideReporterConfigurationWarnings($markup)
+    public function testOverrideFilterConfigurationWarnings($markup)
     {
         $this->mockMarkup($markup);
 
@@ -173,9 +173,9 @@ class MarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testOverrideReporterConfigurationErrorsDataProvdier
+     * @dataProvider testOverrideFilterConfigurationErrorsDataProvdier
      */
-    public function testOverrideReporterConfigurationErrors($markup, array $ignoredErrors)
+    public function testOverrideFilterConfigurationErrors($markup, array $ignoredErrors)
     {
         $this->mockMarkup($markup);
 
@@ -258,7 +258,7 @@ HTML
         );
     }
 
-    public function testOverrideReporterConfigurationWarningsDataProvdier()
+    public function testOverrideFilterConfigurationWarningsDataProvdier()
     {
         return array(
             array(
@@ -283,7 +283,7 @@ HTML
         );
     }
 
-    public function testOverrideReporterConfigurationErrorsDataProvdier()
+    public function testOverrideFilterConfigurationErrorsDataProvdier()
     {
         return array(
             array(
