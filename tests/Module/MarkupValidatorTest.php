@@ -6,6 +6,7 @@ use Exception;
 use PHPUnit_Framework_MockObject_MockObject;
 use Codeception\Lib\ModuleContainer;
 use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
 use Kolyunya\Codeception\Module\MarkupValidator;
 
 class MarkupValidatorTest extends TestCase
@@ -16,7 +17,7 @@ class MarkupValidatorTest extends TestCase
     private $moduleContainer;
 
     /**
-     * @var MarkupValidator|PHPUnit_Framework_MockObject_MockObject
+     * @var MarkupValidator
      */
     private $module;
 
@@ -35,15 +36,16 @@ class MarkupValidatorTest extends TestCase
             ->getMock()
         ;
 
-        $this->module = $this
-            ->getMockBuilder('Kolyunya\Codeception\Module\MarkupValidator')
-            ->setConstructorArgs(array(
-                $this->moduleContainer,
-                null,
-            ))
-            ->enableProxyingToOriginalMethods()
-            ->getMock()
-        ;
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'filter' => array(
+                'class' => DefaultMessageFilter::getClassName(),
+                'config' => array(
+                    'errorCountThreshold' => 0,
+                    'ignoreWarnings' => true,
+                    'ignoredErrors' => array(),
+                ),
+            ),
+        ));
     }
 
     /**
@@ -55,7 +57,12 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidProvider()
     {
-        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «provider».');
+        $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
+        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+            'stdClass',
+            'provider',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface',
+        )));
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'provider' => array(
@@ -66,7 +73,12 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidValidator()
     {
-        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «validator».');
+        $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
+        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+            'stdClass',
+            'validator',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface',
+        )));
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'validator' => array(
@@ -75,12 +87,17 @@ class MarkupValidatorTest extends TestCase
         ));
     }
 
-    public function testInvalidReporter()
+    public function testInvalidFilter()
     {
-        $this->setExpectedException('Exception', 'Invalid class «stdClass» provided for component «reporter».');
+        $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
+        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+            'stdClass',
+            'filter',
+            'Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface',
+        )));
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
-            'reporter' => array(
+            'filter' => array(
                 'class' => 'stdClass',
             ),
         ));
@@ -88,10 +105,10 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidComponentClass()
     {
-        $this->setExpectedException('Exception', 'Invalid class configuration of component «reporter».');
+        $this->setExpectedException('Exception', 'Invalid class configuration of component «filter».');
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
-            'reporter' => array(
+            'filter' => array(
                 'class' => false,
             ),
         ));
@@ -99,11 +116,11 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidComponentConfig()
     {
-        $this->setExpectedException('Exception', 'Invalid configuration of component «reporter».');
+        $this->setExpectedException('Exception', 'Invalid configuration of component «filter».');
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
-            'reporter' => array(
-                'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
+            'filter' => array(
+                'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
                 'config' => 'configuration-parameter',
             ),
         ));
@@ -117,19 +134,60 @@ class MarkupValidatorTest extends TestCase
         $this->mockMarkup($markup);
 
         if ($valid === true) {
-            $this->module->validateMarkup($markup);
+            $this->module->validateMarkup(array(
+                'ignoreWarnings' => false,
+            ));
             $this->assertTrue(true);
             return;
         }
 
         try {
-            $this->module->validateMarkup($markup);
+            $this->module->validateMarkup(array(
+                'ignoreWarnings' => false,
+            ));
         } catch (Exception $exception) {
             $this->assertTrue(true);
             return;
         }
 
         $this->assertTrue(false);
+    }
+
+    /**
+     * @dataProvider testOverrideFilterConfigurationWarningsDataProvdier
+     */
+    public function testOverrideFilterConfigurationWarnings($markup)
+    {
+        $this->mockMarkup($markup);
+
+        try {
+            $this->module->validateMarkup(array(
+                'ignoreWarnings' => false,
+            ));
+        } catch (Exception $exception) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->fail();
+    }
+
+    /**
+     * @dataProvider testOverrideFilterConfigurationErrorsDataProvdier
+     */
+    public function testOverrideFilterConfigurationErrors($markup, array $ignoredErrors)
+    {
+        $this->mockMarkup($markup);
+
+        try {
+            $this->module->validateMarkup(array(
+                'ignoredErrors' => $ignoredErrors,
+            ));
+        } catch (Exception $exception) {
+            $this->fail();
+        }
+
+        $this->assertTrue(true);
     }
 
     public function testValidateMarkupDataProvider()
@@ -196,6 +254,50 @@ HTML
 HTML
                 ,
                 false,
+            ),
+        );
+    }
+
+    public function testOverrideFilterConfigurationWarningsDataProvdier()
+    {
+        return array(
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                            <title>
+                                A page with a warning.
+                            </title>
+                        </head>
+                        <body>
+                            <form>
+                                <button role="button">
+                                </button>
+                            </form>
+                        </body>
+                    </html>
+HTML
+                ,
+            ),
+        );
+    }
+
+    public function testOverrideFilterConfigurationErrorsDataProvdier()
+    {
+        return array(
+            array(
+                <<<HTML
+                    <!DOCTYPE HTML>
+                    <html>
+                        <head>
+                        </head>
+                    </html>
+HTML
+                ,
+                array(
+                    '/Element “head” is missing a required instance of child element “title”./',
+                ),
             ),
         );
     }

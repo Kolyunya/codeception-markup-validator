@@ -56,6 +56,20 @@ interface MarkupValidatorMessageInterface
     public function getDetails();
 
     /**
+     * Returns a number of the first related markup line.
+     *
+     * @return integer|null A number of the first related markup line.
+     */
+    public function getFirstLineNumber();
+
+    /**
+     * Returns a number of the last related markup line.
+     *
+     * @return integer|null A number of the last related markup line.
+     */
+    public function getLastLineNumber();
+
+    /**
      * Returns related markup.
      *
      * @return string|null Related markup.

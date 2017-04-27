@@ -3,27 +3,32 @@
 namespace Kolyunya\Codeception\Module;
 
 use Exception;
+use ReflectionClass;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
-use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter;
+use Kolyunya\Codeception\Lib\Base\ComponentInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
-use Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
+use Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface;
+use Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface;
 
 /**
  * A module which validates page markup via a markup validator.
  */
 class MarkupValidator extends Module
 {
-    const PROVIDER_CONFIG_KEY = 'provider';
-
-    const VALIDATOR_CONFIG_KEY = 'validator';
-
-    const REPORTER_CONFIG_KEY = 'reporter';
 
     const COMPONENT_CLASS_CONFIG_KEY = 'class';
 
     const COMPONENT_CONFIG_CONFIG_KEY = 'config';
+
+    const PROVIDER_CONFIG_KEY = 'provider';
+
+    const VALIDATOR_CONFIG_KEY = 'validator';
+
+    const FILTER_CONFIG_KEY = 'filter';
+
+    const PRINTER_CONFIG_KEY = 'printer';
 
     /**
      * {@inheritDoc}
@@ -37,12 +42,13 @@ class MarkupValidator extends Module
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
             self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
-        self::REPORTER_CONFIG_KEY => array(
-            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupReporter',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(
-                DefaultMarkupReporter::IGNORED_ERRORS_CONFIG_KEY => array(),
-                DefaultMarkupReporter::IGNORE_WARNINGS_CONFIG_KEY => false,
-            ),
+        self::FILTER_CONFIG_KEY => array(
+            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
+        ),
+        self::PRINTER_CONFIG_KEY => array(
+            self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
     );
 
@@ -51,21 +57,28 @@ class MarkupValidator extends Module
      *
      * @var MarkupProviderInterface
      */
-    private $provider;
+    private $markupProvider;
 
     /**
      * Markup validator.
      *
      * @var MarkupValidatorInterface
      */
-    private $validator;
+    private $markupValidator;
 
     /**
-     * Markup validation message reporter.
+     * Message filter.
      *
-     * @var MarkupReporterInterface
+     * @var MessageFilterInterface
      */
-    private $reporter;
+    private $messageFilter;
+
+    /**
+     * Message printer.
+     *
+     * @var MessagePrinterInterface
+     */
+    private $messagePrinter;
 
     /**
      * {@inheritDoc}
@@ -74,21 +87,29 @@ class MarkupValidator extends Module
     {
         parent::__construct($moduleContainer, $config);
 
-        $this->initializeProvider();
-        $this->initializeValidator();
-        $this->initializeReporter();
+        $this->initializeMarkupProvider();
+        $this->initializeMarkupValidator();
+        $this->initializeMessageFilter();
+        $this->initializeMessagePrinter();
     }
 
     /**
      * Validates page markup via a markup validator.
+     * Allows to recongigure message filter component.
+     *
+     * @param array $messageFilterConfiguration Message filter configuration.
      */
-    public function validateMarkup()
+    public function validateMarkup(array $messageFilterConfiguration = array())
     {
-        $markup = $this->provider->getMarkup();
+        $markup = $this->markupProvider->getMarkup();
+        $messages = $this->markupValidator->validate($markup);
 
-        $messages = $this->validator->validate($markup);
-        foreach ($messages as $message) {
-            $this->reporter->report($message);
+        $this->messageFilter->setConfiguration($messageFilterConfiguration);
+        $filteredMessages = $this->messageFilter->filterMessages($messages);
+
+        if (empty($filteredMessages) === false) {
+            $messagesString = $this->messagePrinter->getMessagesString($filteredMessages);
+            $this->fail($messagesString);
         }
 
         // Validation succeeded.
@@ -98,40 +119,68 @@ class MarkupValidator extends Module
     /**
      * Initializes markup provider.
      */
-    private function initializeProvider()
+    private function initializeMarkupProvider()
     {
-        $providerName = self::PROVIDER_CONFIG_KEY;
-        $providerClass = $this->getComponentClass($providerName);
-        $providerConfig = $this->getComponentConfig($providerName);
-        $this->provider = new $providerClass($this->moduleContainer, $providerConfig);
-        $providerInterface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface';
-        $this->validateComponentInstance($this->provider, $providerInterface, $providerName);
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface';
+        $this->markupProvider = $this->instantiateComponent(self::PROVIDER_CONFIG_KEY, $interface, array(
+            $this->moduleContainer,
+        ));
     }
 
     /**
      * Initializes markup validator.
      */
-    private function initializeValidator()
+    private function initializeMarkupValidator()
     {
-        $validatorName = self::VALIDATOR_CONFIG_KEY;
-        $validatorClass = $this->getComponentClass($validatorName);
-        $validatorConfig = $this->getComponentConfig($validatorName);
-        $this->validator = new $validatorClass($validatorConfig);
-        $validatorInterface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface';
-        $this->validateComponentInstance($this->validator, $validatorInterface, $validatorName);
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface';
+        $this->markupValidator = $this->instantiateComponent(self::VALIDATOR_CONFIG_KEY, $interface);
     }
 
     /**
-     * Initializes markup validator.
+     * Initializes message filter.
      */
-    private function initializeReporter()
+    private function initializeMessageFilter()
     {
-        $reporterName = self::REPORTER_CONFIG_KEY;
-        $reporterClass = $this->getComponentClass($reporterName);
-        $reporterConfig = $this->getComponentConfig($reporterName);
-        $this->reporter = new $reporterClass($reporterConfig);
-        $reporterInterface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupReporterInterface';
-        $this->validateComponentInstance($this->reporter, $reporterInterface, $reporterName);
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface';
+        $this->messageFilter = $this->instantiateComponent(self::FILTER_CONFIG_KEY, $interface);
+    }
+
+    /**
+     * Initializes message printer.
+     */
+    private function initializeMessagePrinter()
+    {
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface';
+        $this->messagePrinter = $this->instantiateComponent(self::PRINTER_CONFIG_KEY, $interface);
+    }
+
+    /**
+     * Instantiates and returns a module component.
+     *
+     * @param string $componentName Component name.
+     * @param string $interface An interface component must implement.
+     * @param array $arguments Component's constructor arguments.
+     *
+     * @throws Exception When component does not implement expected interface.
+     *
+     * @return object Instance of a module component.
+     */
+    private function instantiateComponent($componentName, $interface, array $arguments = array())
+    {
+        $componentClass = $this->getComponentClass($componentName);
+        $componentReflectionClass = new ReflectionClass($componentClass);
+        if ($componentReflectionClass->implementsInterface($interface) === false) {
+            $errorMessageTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
+            $errorMessage = sprintf($errorMessageTemplate, $componentClass, $componentName, $interface);
+            throw new Exception($errorMessage);
+        }
+
+        /* @var $component ComponentInterface */
+        $component = $componentReflectionClass->newInstanceArgs($arguments);
+        $componentConfiguration = $this->getComponentConfiguration($componentName);
+        $component->setConfiguration($componentConfiguration);
+
+        return $component;
     }
 
     /**
@@ -161,43 +210,20 @@ class MarkupValidator extends Module
      *
      * @param string $componentName Component name.
      *
-     * @return string Component configuration parameters.
+     * @return array Component configuration parameters.
      */
-    private function getComponentConfig($componentName)
+    private function getComponentConfiguration($componentName)
     {
-        $componentConfig = array();
-
         $componentConfigKey = self::COMPONENT_CONFIG_CONFIG_KEY;
-        if (isset($this->config[$componentName][$componentConfigKey]) === true) {
-            if (is_array($this->config[$componentName][$componentConfigKey]) === true) {
-                $componentConfig = $this->config[$componentName][$componentConfigKey];
-            } else {
-                $errorMessage = sprintf('Invalid configuration of component «%s».', $componentName);
-                throw new Exception($errorMessage);
-            }
-        }
-
-        return $componentConfig;
-    }
-
-    /**
-     * Ensures that a component is an instance of a specifi interface.
-     *
-     * @param object $component Component instance to validate.
-     * @param string $interface Interface to validate component instance against.
-     * @param string $componentName Component name. User for error logging.
-     *
-     * @throws Exception When `component` is not an instance of the `interface`.
-     */
-    private function validateComponentInstance($component, $interface, $componentName)
-    {
-        if (($component instanceof $interface) === false) {
-            $componentClass = get_class($component);
-            $errorMessage = vsprintf('Invalid class «%s» provided for component «%s».', array(
-                $componentClass,
-                $componentName,
-            ));
+        if (isset($this->config[$componentName][$componentConfigKey]) === false ||
+            is_array($this->config[$componentName][$componentConfigKey]) === false
+        ) {
+            $errorMessage = sprintf('Invalid configuration of component «%s».', $componentName);
             throw new Exception($errorMessage);
         }
+
+        $componentConfig = $this->config[$componentName][$componentConfigKey];
+
+        return $componentConfig;
     }
 }

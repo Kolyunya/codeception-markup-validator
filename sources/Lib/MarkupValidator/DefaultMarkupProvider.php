@@ -6,13 +6,14 @@ use Exception;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module\PhpBrowser;
 use Codeception\Module\WebDriver;
+use Kolyunya\Codeception\Lib\Base\Component;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
 
 /**
  * Default markup provider which attemps to get markup from
  * `PhpBrowser` and `WebDriver` modules.
  */
-class DefaultMarkupProvider implements MarkupProviderInterface
+class DefaultMarkupProvider extends Component implements MarkupProviderInterface
 {
     /**
      * Module container.
@@ -24,8 +25,10 @@ class DefaultMarkupProvider implements MarkupProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function __construct(ModuleContainer $moduleContainer, array $config = array())
+    public function __construct(ModuleContainer $moduleContainer, array $configuration = array())
     {
+        parent::__construct($configuration);
+
         $this->moduleContainer = $moduleContainer;
     }
 

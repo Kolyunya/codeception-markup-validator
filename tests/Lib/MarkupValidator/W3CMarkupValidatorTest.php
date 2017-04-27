@@ -2,7 +2,6 @@
 
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
-use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
@@ -10,7 +9,7 @@ use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
 class W3CMarkupValidatorTest extends TestCase
 {
     /**
-     * @var W3CMarkupValidator|PHPUnit_Framework_MockObject_MockObject
+     * @var W3CMarkupValidator
      */
     private $validator;
 
@@ -19,11 +18,7 @@ class W3CMarkupValidatorTest extends TestCase
      */
     public function setUp()
     {
-        $this->validator = $this
-            ->getMockBuilder('Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator')
-            ->enableProxyingToOriginalMethods()
-            ->getMock()
-        ;
+        $this->validator = new W3CMarkupValidator();
     }
 
     /**
@@ -48,6 +43,8 @@ class W3CMarkupValidatorTest extends TestCase
             $this->assertEquals($message->getType(), $messageData['type']);
             $this->assertEquals($message->getSummary(), $messageData['summary']);
             $this->assertEquals($message->getDetails(), $messageData['details']);
+            $this->assertEquals($message->getFirstLineNumber(), $messageData['firstLineNumber']);
+            $this->assertEquals($message->getLastLineNumber(), $messageData['lastLineNumber']);
             $this->assertContains($messageData['markup'], $message->getMarkup());
         }
     }
@@ -56,7 +53,7 @@ class W3CMarkupValidatorTest extends TestCase
     {
         $this->setExpectedException('Exception', 'Unable to parse W3C Markup Validation Service response.');
 
-        $this->validator = new W3CMarkupValidator(array(
+        $this->validator->setConfiguration(array(
             'baseUri' => 'https://validator.w3.org/',
             'endpoint' => '/',
         ));
@@ -96,6 +93,8 @@ HTML
                         'summary' => 'Element “head” is missing a required instance of child element “title”.',
                         'details' => null,
                         'markup' => '</head>',
+                        'firstLineNumber' => null,
+                        'lastLineNumber' => 4,
                     ),
                 ),
             ),
@@ -120,12 +119,16 @@ HTML
                         'summary' => 'Element “head” is missing a required instance of child element “title”.',
                         'details' => null,
                         'markup' => '</head>',
+                        'firstLineNumber' => null,
+                        'lastLineNumber' => 4,
                     ),
                     array(
                         'type' => MarkupValidatorMessageInterface::TYPE_WARNING,
                         'summary' => 'The “button” role is unnecessary for element “button”.',
                         'details' => null,
                         'markup' => '<button role="button">',
+                        'firstLineNumber' => null,
+                        'lastLineNumber' => 7,
                     ),
                 ),
             ),
