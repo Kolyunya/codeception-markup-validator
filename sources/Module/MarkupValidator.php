@@ -22,16 +22,12 @@ class MarkupValidator extends Module
 
     const COMPONENT_CONFIG_CONFIG_KEY = 'config';
 
-    const PROVIDER_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface';
     const PROVIDER_CONFIG_KEY = 'provider';
 
-    const VALIDATOR_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface';
     const VALIDATOR_CONFIG_KEY = 'validator';
 
-    const FILTER_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface';
     const FILTER_CONFIG_KEY = 'filter';
 
-    const PRINTER_INTERFACE = 'Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface';
     const PRINTER_CONFIG_KEY = 'printer';
 
     /**
@@ -40,15 +36,19 @@ class MarkupValidator extends Module
     protected $config = array(
         self::PROVIDER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::VALIDATOR_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::FILTER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::PRINTER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter',
+            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
     );
 
@@ -121,13 +121,10 @@ class MarkupValidator extends Module
      */
     private function initializeMarkupProvider()
     {
-        $this->markupProvider = $this->instantiateComponent(
-            self::PROVIDER_CONFIG_KEY,
-            self::PROVIDER_INTERFACE,
-            array(
-                $this->moduleContainer,
-            )
-        );
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface';
+        $this->markupProvider = $this->instantiateComponent(self::PROVIDER_CONFIG_KEY, $interface, array(
+            $this->moduleContainer,
+        ));
     }
 
     /**
@@ -135,10 +132,8 @@ class MarkupValidator extends Module
      */
     private function initializeMarkupValidator()
     {
-        $this->markupValidator = $this->instantiateComponent(
-            self::VALIDATOR_CONFIG_KEY,
-            self::VALIDATOR_INTERFACE
-        );
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface';
+        $this->markupValidator = $this->instantiateComponent(self::VALIDATOR_CONFIG_KEY, $interface);
     }
 
     /**
@@ -146,10 +141,8 @@ class MarkupValidator extends Module
      */
     private function initializeMessageFilter()
     {
-        $this->messageFilter = $this->instantiateComponent(
-            self::FILTER_CONFIG_KEY,
-            self::FILTER_INTERFACE
-        );
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface';
+        $this->messageFilter = $this->instantiateComponent(self::FILTER_CONFIG_KEY, $interface);
     }
 
     /**
@@ -157,10 +150,8 @@ class MarkupValidator extends Module
      */
     private function initializeMessagePrinter()
     {
-        $this->messagePrinter = $this->instantiateComponent(
-            self::PRINTER_CONFIG_KEY,
-            self::PRINTER_INTERFACE
-        );
+        $interface = 'Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface';
+        $this->messagePrinter = $this->instantiateComponent(self::PRINTER_CONFIG_KEY, $interface);
     }
 
     /**
@@ -223,17 +214,15 @@ class MarkupValidator extends Module
      */
     private function getComponentConfiguration($componentName)
     {
-        $componentConfig = array();
-
         $componentConfigKey = self::COMPONENT_CONFIG_CONFIG_KEY;
-        if (isset($this->config[$componentName][$componentConfigKey]) === true) {
-            if (is_array($this->config[$componentName][$componentConfigKey]) === true) {
-                $componentConfig = $this->config[$componentName][$componentConfigKey];
-            } else {
-                $errorMessage = sprintf('Invalid configuration of component «%s».', $componentName);
-                throw new Exception($errorMessage);
-            }
+        if (isset($this->config[$componentName][$componentConfigKey]) === false ||
+            is_array($this->config[$componentName][$componentConfigKey]) === false
+        ) {
+            $errorMessage = sprintf('Invalid configuration of component «%s».', $componentName);
+            throw new Exception($errorMessage);
         }
+
+        $componentConfig = $this->config[$componentName][$componentConfigKey];
 
         return $componentConfig;
     }
