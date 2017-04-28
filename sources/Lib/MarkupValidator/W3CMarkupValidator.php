@@ -103,8 +103,7 @@ class W3CMarkupValidator extends Component implements MarkupValidatorInterface
         $responseData = $reponse->getBody()->getContents();
         $validationData = json_decode($responseData, true);
         if ($validationData === null) {
-            $errorMessageTemplate = "Unable to parse W3C Markup Validation Service response.";
-            throw new Exception(sprintf($errorMessageTemplate, $responseData));
+            throw new Exception('Unable to parse W3C Markup Validation Service response.');
         }
 
         return $validationData;
