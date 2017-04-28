@@ -7,8 +7,11 @@
 [![Code Climate](https://codeclimate.com/github/Kolyunya/codeception-markup-validator/badges/gpa.svg)](https://codeclimate.com/github/Kolyunya/codeception-markup-validator)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/c7566433-052d-41f1-ab34-857f4650a18a/mini.png)](https://insight.sensiolabs.com/projects/c7566433-052d-41f1-ab34-857f4650a18a)
 
-## Description
-Markup validator module for [Codeception](http://codeception.com). Validates web-pages markup (HTML, XHTML etc.) using markup validators e.g. [W3C Markup Validator Service](https://validator.w3.org/docs/api.html). Don't let invalid pages reach production. Add some zero effort tests to your acceptance suite which will immediately inform you when your markup gets broken. 
+## Problem
+Programmatically validate markup of web application pages during automated acceptance testing.
+
+## Solution
+Markup validator module for [Codeception](http://codeception.com). Validates web-pages markup (HTML, XHTML etc.) using markup validators e.g. [W3C Markup Validator Service](https://validator.w3.org/docs/api.html). Don't let invalid pages reach production. Add some zero effort tests to your acceptance suite which will immediately inform you when your markup gets broken.
 ```php
 $I->amOnPage('/');
 $I->validateMarkup();
