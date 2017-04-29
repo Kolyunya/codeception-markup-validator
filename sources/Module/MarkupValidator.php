@@ -36,19 +36,15 @@ class MarkupValidator extends Module
     protected $config = array(
         self::PROVIDER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::VALIDATOR_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::FILTER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
         self::PRINTER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter',
-            self::COMPONENT_CONFIG_CONFIG_KEY => array(),
         ),
     );
 
@@ -214,15 +210,17 @@ class MarkupValidator extends Module
      */
     private function getComponentConfiguration($componentName)
     {
-        $componentConfigKey = self::COMPONENT_CONFIG_CONFIG_KEY;
-        if (isset($this->config[$componentName][$componentConfigKey]) === false ||
-            is_array($this->config[$componentName][$componentConfigKey]) === false
-        ) {
-            $errorMessage = sprintf('Invalid configuration of component «%s».', $componentName);
-            throw new Exception($errorMessage);
-        }
+        $componentConfig = array();
 
-        $componentConfig = $this->config[$componentName][$componentConfigKey];
+        $componentConfigKey = self::COMPONENT_CONFIG_CONFIG_KEY;
+        if (isset($this->config[$componentName][$componentConfigKey]) === true) {
+            if (is_array($this->config[$componentName][$componentConfigKey]) === false) {
+                $errorMessage = sprintf('Invalid configuration of component «%s».', $componentName);
+                throw new Exception($errorMessage);
+            }
+
+            $componentConfig = $this->config[$componentName][$componentConfigKey];
+        }
 
         return $componentConfig;
     }
