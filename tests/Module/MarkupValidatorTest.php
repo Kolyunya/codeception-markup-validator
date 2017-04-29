@@ -126,6 +126,15 @@ class MarkupValidatorTest extends TestCase
         ));
     }
 
+    public function testMissingComponentConfig()
+    {
+        $this->module = new MarkupValidator($this->moduleContainer, array(
+            'filter' => array(
+                'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
+            ),
+        ));
+    }
+
     /**
      * @dataProvider testValidateMarkupDataProvider
      */
