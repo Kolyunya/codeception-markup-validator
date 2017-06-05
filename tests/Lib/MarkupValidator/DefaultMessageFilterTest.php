@@ -3,10 +3,10 @@
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
 use Exception;
-use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessage;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
+use PHPUnit\Framework\TestCase;
 
 class DefaultMessageFilterTest extends TestCase
 {

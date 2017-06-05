@@ -2,9 +2,9 @@
 
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
-use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidatorMessage;
+use PHPUnit\Framework\TestCase;
 
 class W3CMarkupValidatorMessageTest extends TestCase
 {

@@ -2,22 +2,21 @@
 
 namespace Kolyunya\Codeception\Module;
 
-use Exception;
-use ReflectionClass;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
+use Exception;
 use Kolyunya\Codeception\Lib\Base\ComponentInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MessagePrinterInterface;
+use ReflectionClass;
 
 /**
  * A module which validates page markup via a markup validator.
  */
 class MarkupValidator extends Module
 {
-
     const COMPONENT_CLASS_CONFIG_KEY = 'class';
 
     const COMPONENT_CONFIG_CONFIG_KEY = 'config';
