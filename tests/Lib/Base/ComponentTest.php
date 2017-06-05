@@ -2,12 +2,12 @@
 
 namespace Kolyunya\Codeception\Tests\Lib\Base;
 
-use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\Base\Component;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
+use PHPUnit\Framework\TestCase;
 
 class ComponentTest extends TestCase
 {

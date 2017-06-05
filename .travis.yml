@@ -37,7 +37,7 @@ before_script:
     - composer update
 script:
     - vendor/bin/phpunit
-    - vendor/bin/phpcs
+    - vendor/bin/php-cs-fixer fix --dry-run --verbose
     - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
     - if [ "$ANALYZE" = "true" ]; then export PATH=~/.composer/vendor/bin:$PATH; fi;
     - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources --configuration=phpstan-sources.neon --level=5; fi;

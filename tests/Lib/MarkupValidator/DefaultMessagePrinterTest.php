@@ -2,10 +2,10 @@
 
 namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
-use PHPUnit\Framework\TestCase;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessage;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
+use PHPUnit\Framework\TestCase;
 
 class DefaultMessagePrinterTest extends TestCase
 {

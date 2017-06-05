@@ -4,8 +4,8 @@ namespace Kolyunya\Codeception\Lib\MarkupValidator;
 
 use Exception;
 use Kolyunya\Codeception\Lib\Base\Component;
-use Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
+use Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface;
 
 /**
  * Default markup validation message filter.

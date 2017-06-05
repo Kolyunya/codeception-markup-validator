@@ -2,10 +2,10 @@
 
 namespace Kolyunya\Codeception\Lib\MarkupValidator;
 
-use Exception;
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module\PhpBrowser;
 use Codeception\Module\WebDriver;
+use Exception;
 use Kolyunya\Codeception\Lib\Base\Component;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface;
 

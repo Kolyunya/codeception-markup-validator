@@ -65,9 +65,9 @@ class W3CMarkupValidator extends Component implements MarkupValidatorInterface
      */
     private function initializeHttpClient()
     {
-        $this->httpClient = new Client([
+        $this->httpClient = new Client(array(
             'base_uri' => $this->configuration[self::BASE_URI_CONFIG_KEY],
-        ]);
+        ));
     }
 
     /**
