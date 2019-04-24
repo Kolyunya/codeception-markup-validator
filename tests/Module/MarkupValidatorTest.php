@@ -58,7 +58,7 @@ class MarkupValidatorTest extends TestCase
     public function testInvalidProvider()
     {
         $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
-        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+        $this->expectExceptionMessage(vsprintf($exceptionTemplate, array(
             'stdClass',
             'provider',
             'Kolyunya\Codeception\Lib\MarkupValidator\MarkupProviderInterface',
@@ -74,7 +74,7 @@ class MarkupValidatorTest extends TestCase
     public function testInvalidValidator()
     {
         $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
-        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+        $this->expectExceptionMessage(vsprintf($exceptionTemplate, array(
             'stdClass',
             'validator',
             'Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorInterface',
@@ -90,7 +90,7 @@ class MarkupValidatorTest extends TestCase
     public function testInvalidFilter()
     {
         $exceptionTemplate = 'Invalid class «%s» provided for component «%s». It must implement «%s».';
-        $this->setExpectedException('Exception', vsprintf($exceptionTemplate, array(
+        $this->expectExceptionMessage(vsprintf($exceptionTemplate, array(
             'stdClass',
             'filter',
             'Kolyunya\Codeception\Lib\MarkupValidator\MessageFilterInterface',
@@ -105,7 +105,7 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidComponentClass()
     {
-        $this->setExpectedException('Exception', 'Invalid class configuration of component «filter».');
+        $this->expectExceptionMessage('Invalid class configuration of component «filter».');
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'filter' => array(
@@ -116,7 +116,7 @@ class MarkupValidatorTest extends TestCase
 
     public function testInvalidComponentConfig()
     {
-        $this->setExpectedException('Exception', 'Invalid configuration of component «filter».');
+        $this->expectExceptionMessage('Invalid configuration of component «filter».');
 
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'filter' => array(
@@ -126,7 +126,7 @@ class MarkupValidatorTest extends TestCase
         ));
     }
 
-    public function testMissingComponentConfig()
+    public function missingComponentConfig()
     {
         $this->module = new MarkupValidator($this->moduleContainer, array(
             'filter' => array(
@@ -136,7 +136,7 @@ class MarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testValidateMarkupDataProvider
+     * @dataProvider validateMarkupDataProvider
      */
     public function testValidateMarkup($markup, $valid)
     {
@@ -163,7 +163,7 @@ class MarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testOverrideFilterConfigurationWarningsDataProvdier
+     * @dataProvider overrideFilterConfigurationWarningsDataProvdier
      */
     public function testOverrideFilterConfigurationWarnings($markup)
     {
@@ -182,7 +182,7 @@ class MarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testOverrideFilterConfigurationErrorsDataProvdier
+     * @dataProvider overrideFilterConfigurationErrorsDataProvdier
      */
     public function testOverrideFilterConfigurationErrors($markup, array $ignoredErrors)
     {
@@ -199,13 +199,13 @@ class MarkupValidatorTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testValidateMarkupDataProvider()
+    public function validateMarkupDataProvider()
     {
         return array(
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>
                                 A valid page.
@@ -219,7 +219,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                     </html>
@@ -230,7 +230,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                         <body>
@@ -247,7 +247,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>
                                 A page with a warning.
@@ -267,13 +267,13 @@ HTML
         );
     }
 
-    public function testOverrideFilterConfigurationWarningsDataProvdier()
+    public function overrideFilterConfigurationWarningsDataProvdier()
     {
         return array(
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>
                                 A page with a warning.
@@ -292,13 +292,13 @@ HTML
         );
     }
 
-    public function testOverrideFilterConfigurationErrorsDataProvdier()
+    public function overrideFilterConfigurationErrorsDataProvdier()
     {
         return array(
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                     </html>

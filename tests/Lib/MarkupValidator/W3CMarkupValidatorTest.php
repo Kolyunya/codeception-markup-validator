@@ -29,7 +29,7 @@ class W3CMarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testValidateMarkupDataProvider
+     * @dataProvider validateMarkupDataProvider
      */
     public function testValidateMarkup($markup, $messagesData)
     {
@@ -51,7 +51,7 @@ class W3CMarkupValidatorTest extends TestCase
 
     public function testInvalidValidationServiceResponse()
     {
-        $this->setExpectedException('Exception', 'Unable to parse W3C Markup Validation Service response.');
+        $this->expectExceptionMessage('Unable to parse W3C Markup Validation Service response.');
 
         $this->validator->setConfiguration(array(
             'baseUri' => 'https://validator.w3.org/',
@@ -60,13 +60,13 @@ class W3CMarkupValidatorTest extends TestCase
         $this->validator->validate('<html></html>');
     }
 
-    public function testValidateMarkupDataProvider()
+    public function validateMarkupDataProvider()
     {
         return array(
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>
                                 A valid page.
@@ -81,7 +81,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                     </html>
@@ -101,7 +101,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                         <body>

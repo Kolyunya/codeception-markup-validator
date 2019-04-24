@@ -23,7 +23,7 @@ class W3CMarkupValidatorMessageTest extends TestCase
     }
 
     /**
-     * @dataProvider testConstructorDataProvider
+     * @dataProvider constructorDataProvider
      */
     public function testConstructor($data, $type, $summary, $details, $firstLineNumber, $lastLineNumber, $markup)
     {
@@ -37,7 +37,7 @@ class W3CMarkupValidatorMessageTest extends TestCase
         $this->assertEquals($message->getMarkup(), $markup);
     }
 
-    public function testConstructorDataProvider()
+    public function constructorDataProvider()
     {
         return array(
             array(

@@ -31,7 +31,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testFilterMessagesDataProvider
+     * @dataProvider filterMessagesDataProvider
      */
     public function testFilterMessages($sourceMessages, $filteredMessagesExpected)
     {
@@ -47,7 +47,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testerrorCountThresholdDataProvider
+     * @dataProvider errorCountThresholdDataProvider
      */
     public function testerrorCountThreshold($messages, $threshold, $filteredMessagesExpected)
     {
@@ -62,7 +62,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testIgnoreWarningsDataProvider
+     * @dataProvider ignoreWarningsDataProvider
      */
     public function testIgnoreWarnings($messages, $filteredMessagesExpected)
     {
@@ -77,7 +77,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testIgnoredErrorsDataProvider
+     * @dataProvider ignoredErrorsDataProvider
      */
     public function testIgnoredErrors($messages, $ignoredErrors, $filteredMessagesExpected)
     {
@@ -93,7 +93,7 @@ class DefaultMessageFilterTest extends TestCase
 
     public function testInvaliderrorCountThresholdConfig()
     {
-        $this->setExpectedException('Exception', 'Invalid «errorCountThreshold» config key.');
+        $this->expectExceptionMessage('Invalid «errorCountThreshold» config key.');
 
         $warning = new MarkupValidatorMessage();
         $warning->setType(MarkupValidatorMessageInterface::TYPE_WARNING);
@@ -106,7 +106,7 @@ class DefaultMessageFilterTest extends TestCase
 
     public function testInvalidIgnoreWarningsConfig()
     {
-        $this->setExpectedException('Exception', 'Invalid «ignoreWarnings» config key.');
+        $this->expectExceptionMessage('Invalid «ignoreWarnings» config key.');
 
         $warning = new MarkupValidatorMessage();
         $warning->setType(MarkupValidatorMessageInterface::TYPE_WARNING);
@@ -122,7 +122,7 @@ class DefaultMessageFilterTest extends TestCase
 
     public function testInvalidIgnoreErrorsConfig()
     {
-        $this->setExpectedException('Exception', 'Invalid «ignoredErrors» config key.');
+        $this->expectExceptionMessage('Invalid «ignoredErrors» config key.');
 
         $error = new MarkupValidatorMessage();
         $error->setType(MarkupValidatorMessageInterface::TYPE_ERROR);
@@ -133,7 +133,7 @@ class DefaultMessageFilterTest extends TestCase
         $this->filter->filterMessages(array($error));
     }
 
-    public function testerrorCountThresholdDataProvider()
+    public function errorCountThresholdDataProvider()
     {
         return array(
             array(
@@ -203,7 +203,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function testFilterMessagesDataProvider()
+    public function filterMessagesDataProvider()
     {
         return array(
             array(
@@ -259,7 +259,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function testIgnoreWarningsDataProvider()
+    public function ignoreWarningsDataProvider()
     {
         return array(
             array(
@@ -317,7 +317,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function testIgnoredErrorsDataProvider()
+    public function ignoredErrorsDataProvider()
     {
         return array(
             array(

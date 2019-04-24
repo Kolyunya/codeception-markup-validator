@@ -46,7 +46,7 @@ class DefaultMarkupProviderTest extends TestCase
 
     public function testWithNoPhpBrowserNoWebDriver()
     {
-        $this->setExpectedException('Exception', 'Unable to obtain current page markup.');
+        self::expectExceptionMessage('Unable to obtain current page markup.');
         $this->provider->getMarkup();
     }
 

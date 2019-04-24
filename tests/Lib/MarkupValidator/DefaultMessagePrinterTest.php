@@ -30,7 +30,7 @@ class DefaultMessagePrinterTest extends TestCase
     }
 
     /**
-     * @dataProvider testGetMessageStringDataProvider
+     * @dataProvider getMessageStringDataProvider
      */
     public function testGetMessageString($message, $stringExpected)
     {
@@ -39,7 +39,7 @@ class DefaultMessagePrinterTest extends TestCase
     }
 
     /**
-     * @dataProvider testGetMessagesStringDataProvider
+     * @dataProvider getMessagesStringDataProvider
      */
     public function testGetMessagesString(array $messages, $stringExpected)
     {
@@ -47,7 +47,7 @@ class DefaultMessagePrinterTest extends TestCase
         $this->assertEquals($stringExpected, $stringActual);
     }
 
-    public function testGetMessageStringDataProvider()
+    public function getMessageStringDataProvider()
     {
         return array(
             array(
@@ -105,7 +105,7 @@ TXT
         );
     }
 
-    public function testGetMessagesStringDataProvider()
+    public function getMessagesStringDataProvider()
     {
         return array(
             array(

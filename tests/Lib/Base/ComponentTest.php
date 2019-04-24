@@ -26,14 +26,14 @@ class ComponentTest extends TestCase
     }
 
     /**
-     * @dataProvider testGetClassNameDataProvider
+     * @dataProvider classNameDataProvider
      */
     public function testGetClassName($classNameActual, $classNameExpected)
     {
         $this->assertEquals($classNameActual, $classNameExpected);
     }
 
-    public function testGetClassNameDataProvider()
+    public function classNameDataProvider()
     {
         return array(
             array(

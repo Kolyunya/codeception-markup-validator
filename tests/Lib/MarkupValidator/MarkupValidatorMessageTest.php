@@ -38,7 +38,7 @@ class MarkupValidatorMessageTest extends TestCase
     }
 
     /**
-     * @dataProvider testCustomInitializationDataProvider
+     * @dataProvider customInitializationDataProvider
      */
     public function testCustomInitialization($type, $summary, $details, $markup, $firstLineNumber, $lastLineNumber)
     {
@@ -64,7 +64,7 @@ class MarkupValidatorMessageTest extends TestCase
     }
 
     /**
-     * @dataProvider testToStringDataProvider
+     * @dataProvider toStringDataProvider
      */
     public function testToString($type, $summary, $details, $firstLineNumber, $lastLineNumber, $markup, $string)
     {
@@ -80,7 +80,7 @@ class MarkupValidatorMessageTest extends TestCase
         $this->assertEquals($string, $messageString);
     }
 
-    public function testCustomInitializationDataProvider()
+    public function customInitializationDataProvider()
     {
         return array(
             array(
@@ -110,7 +110,7 @@ class MarkupValidatorMessageTest extends TestCase
         );
     }
 
-    public function testToStringDataProvider()
+    public function toStringDataProvider()
     {
         return array(
             array(
