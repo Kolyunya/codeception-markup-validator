@@ -38,7 +38,7 @@ before_script:
 script:
     - vendor/bin/phpunit
     - vendor/bin/php-cs-fixer fix --dry-run --verbose
-    - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
+    - if [ "$ANALYZE" = "true" ]; then composer require phpstan/phpstan-shim; fi;
     - if [ "$ANALYZE" = "true" ]; then php vendor/bin/phpstan analyze sources --configuration=phpstan-sources.neon --level=5; fi;
     - if [ "$ANALYZE" = "true" ]; then php vendor/bin/phpstan analyze tests --configuration=phpstan-tests.neon --level=1; fi;
 after_success:
