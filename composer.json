@@ -21,7 +21,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.4 <8.0"
+        "php": ">=5.4",
+        "ext-json": "*"
     },
     "require-dev": {
         "codeception/codeception": "^2.0.0 || ^3.0.0",

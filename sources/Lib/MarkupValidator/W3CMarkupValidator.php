@@ -96,12 +96,15 @@ class W3CMarkupValidator extends Component implements MarkupValidatorInterface
     {
         $this->httpRequestParameters['body'] = $markup;
 
-        $reponse = $this->httpClient->post(
+        $response = $this->httpClient->post(
             $this->configuration[self::ENDPOINT_CONFIG_KEY],
             $this->httpRequestParameters
         );
-        $responseData = $reponse->getBody()->getContents();
+        $responseData = $response->getBody()->getContents();
         $validationData = json_decode($responseData, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Unable to parse W3C Markup Validation Service response: ' . print_r($responseData, true) . ' | ' . print_r(json_last_error_msg(), true));
+        }
         if ($validationData === null) {
             throw new Exception('Unable to parse W3C Markup Validation Service response.');
         }

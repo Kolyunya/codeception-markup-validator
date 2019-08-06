@@ -1,11 +1,9 @@
-dist: trusty
 language: php
+
+sudo: false
+
 matrix:
     include:
-        -
-            php: 'hhvm'
-            env:
-                - ANALYZE=false
         -
             php: '5.5'
             env:
@@ -17,29 +15,25 @@ matrix:
         -
             php: '7.0'
             env:
-                - ANALYZE=true
+                - ANALYZE=false
         -
             php: '7.1'
             env:
                 - ANALYZE=true
-    allow_failures:
-        # https://github.com/travis-ci/travis-ci/issues/6339
         -
-            php: '5.4'
-            env:
-                - ANALYZE=false
-        # https://github.com/guzzle/guzzle/issues/1750
-        -
-            php: 'nightly'
+            php: '7.2'
             env:
                 - ANALYZE=true
+
 before_script:
     - composer update
+
 script:
     - vendor/bin/phpunit
     - vendor/bin/php-cs-fixer fix --dry-run --verbose
     - if [ "$ANALYZE" = "true" ]; then composer require phpstan/phpstan-shim; fi;
     - if [ "$ANALYZE" = "true" ]; then php vendor/bin/phpstan analyze sources --configuration=phpstan-sources.neon --level=5; fi;
     - if [ "$ANALYZE" = "true" ]; then php vendor/bin/phpstan analyze tests --configuration=phpstan-tests.neon --level=1; fi;
+
 after_success:
     - travis_retry vendor/bin/coveralls

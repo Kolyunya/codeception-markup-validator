@@ -51,7 +51,7 @@ class W3CMarkupValidatorTest extends TestCase
 
     public function testInvalidValidationServiceResponse()
     {
-        $this->expectExceptionMessage('Unable to parse W3C Markup Validation Service response.');
+        $this->expectExceptionMessageRegExp('/Unable to parse W3C Markup Validation Service response: .*/');
 
         $this->validator->setConfiguration(array(
             'baseUri' => 'https://validator.w3.org/',
