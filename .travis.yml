@@ -13,7 +13,7 @@ matrix:
         -
             php: '7.0'
             env:
-                - ANALYZE=true
+                - ANALYZE=false
         -
             php: '7.1'
             env:
