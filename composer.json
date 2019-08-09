@@ -1,7 +1,7 @@
 {
     "name": "kolyunya/codeception-markup-validator",
     "description": "Markup validator module for Codeception.",
-    "license": "LGPL-3.0",
+    "license": "LGPL-3.0-or-later",
     "type": "library",
     "keywords": [
         "acceptance-testing",

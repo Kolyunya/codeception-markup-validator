@@ -205,7 +205,7 @@ class MarkupValidatorTest extends TestCase
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>
                                 A valid page.
@@ -219,7 +219,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                     </html>
@@ -230,7 +230,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                         <body>
@@ -247,7 +247,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>
                                 A page with a warning.
@@ -273,7 +273,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                             <title>
                                 A page with a warning.
@@ -298,7 +298,7 @@ HTML
             array(
                 <<<HTML
                     <!DOCTYPE HTML>
-                    <html>
+                    <html lang="en">
                         <head>
                         </head>
                     </html>

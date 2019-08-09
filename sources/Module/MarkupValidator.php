@@ -50,28 +50,28 @@ class MarkupValidator extends Module
     /**
      * Markup provider.
      *
-     * @var MarkupProviderInterface
+     * @var MarkupProviderInterface|object
      */
     private $markupProvider;
 
     /**
      * Markup validator.
      *
-     * @var MarkupValidatorInterface
+     * @var MarkupValidatorInterface|object
      */
     private $markupValidator;
 
     /**
      * Message filter.
      *
-     * @var MessageFilterInterface
+     * @var MessageFilterInterface|object
      */
     private $messageFilter;
 
     /**
      * Message printer.
      *
-     * @var MessagePrinterInterface
+     * @var MessagePrinterInterface|object
      */
     private $messagePrinter;
 

@@ -55,7 +55,7 @@ class DefaultMarkupProviderTest extends TestCase
         $expectedMarkup =
             <<<HTML
                 <!DOCTYPE HTML>
-                <html>
+                <html lang="en">
                     <head>
                         <title>
                             A valid page.
@@ -100,7 +100,7 @@ HTML
         $expectedMarkup =
             <<<HTML
                 <!DOCTYPE HTML>
-                <html>
+                <html lang="en">
                     <head>
                         <title>
                             A valid page.
