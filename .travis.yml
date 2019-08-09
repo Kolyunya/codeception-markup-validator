@@ -3,10 +3,6 @@ language: php
 matrix:
     include:
         -
-            php: 'hhvm'
-            env:
-                - ANALYZE=false
-        -
             php: '5.5'
             env:
                 - ANALYZE=false
@@ -20,6 +16,14 @@ matrix:
                 - ANALYZE=true
         -
             php: '7.1'
+            env:
+                - ANALYZE=true
+        -
+            php: '7.2'
+            env:
+                - ANALYZE=true
+        -
+            php: '7.3'
             env:
                 - ANALYZE=true
     allow_failures:
@@ -39,7 +43,7 @@ script:
     - vendor/bin/phpunit
     - vendor/bin/php-cs-fixer fix --dry-run --verbose
     - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
-    - if [ "$ANALYZE" = "true" ]; then export PATH=~/.composer/vendor/bin:$PATH; fi;
+    - if [ "$ANALYZE" = "true" ]; then export PATH=~/.config/composer/vendor/bin:$PATH; fi;
     - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources --configuration=phpstan-sources.neon --level=5; fi;
     - if [ "$ANALYZE" = "true" ]; then phpstan analyze tests --configuration=phpstan-tests.neon --level=1; fi;
 after_success:
