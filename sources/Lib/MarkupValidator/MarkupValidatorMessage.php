@@ -84,7 +84,7 @@ class MarkupValidatorMessage implements MarkupValidatorMessageInterface
     /**
      * Sets message type.
      *
-     * @param string $type Message type.
+     * @param string|null $type Message type.
      *
      * @return self Returns self.
      */
