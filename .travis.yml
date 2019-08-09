@@ -3,6 +3,10 @@ language: php
 matrix:
     include:
         -
+            php: '5.4'
+            env:
+                - ANALYZE=false
+        -
             php: '5.5'
             env:
                 - ANALYZE=false
@@ -32,11 +36,6 @@ matrix:
             php: '5.4'
             env:
                 - ANALYZE=false
-        # https://github.com/guzzle/guzzle/issues/1750
-        -
-            php: 'nightly'
-            env:
-                - ANALYZE=true
 before_script:
     - composer update
 script:
