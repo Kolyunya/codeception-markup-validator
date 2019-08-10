@@ -4,7 +4,7 @@ namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
 use Codeception\Lib\ModuleContainer;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider;
-use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Tests\Base\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 class DefaultMarkupProviderTest extends TestCase

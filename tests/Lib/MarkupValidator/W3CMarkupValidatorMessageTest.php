@@ -4,7 +4,7 @@ namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidatorMessage;
-use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Tests\Base\TestCase;
 
 class W3CMarkupValidatorMessageTest extends TestCase
 {
@@ -23,7 +23,7 @@ class W3CMarkupValidatorMessageTest extends TestCase
     }
 
     /**
-     * @dataProvider testConstructorDataProvider
+     * @dataProvider dataProviderConstructor
      */
     public function testConstructor($data, $type, $summary, $details, $firstLineNumber, $lastLineNumber, $markup)
     {
@@ -37,7 +37,7 @@ class W3CMarkupValidatorMessageTest extends TestCase
         $this->assertEquals($message->getMarkup(), $markup);
     }
 
-    public function testConstructorDataProvider()
+    public function dataProviderConstructor()
     {
         return array(
             array(

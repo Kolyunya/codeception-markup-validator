@@ -7,7 +7,7 @@ use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessagePrinter;
 use Kolyunya\Codeception\Lib\MarkupValidator\W3CMarkupValidator;
-use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Tests\Base\TestCase;
 
 class ComponentTest extends TestCase
 {
@@ -26,14 +26,14 @@ class ComponentTest extends TestCase
     }
 
     /**
-     * @dataProvider testGetClassNameDataProvider
+     * @dataProvider dataProviderGetClassName
      */
     public function testGetClassName($classNameActual, $classNameExpected)
     {
         $this->assertEquals($classNameActual, $classNameExpected);
     }
 
-    public function testGetClassNameDataProvider()
+    public function dataProviderGetClassName()
     {
         return array(
             array(
