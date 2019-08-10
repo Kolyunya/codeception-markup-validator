@@ -6,7 +6,7 @@ use Exception;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessage;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
-use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Tests\Base\TestCase;
 
 class DefaultMessageFilterTest extends TestCase
 {
@@ -31,7 +31,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testFilterMessagesDataProvider
+     * @dataProvider dataProviderFilterMessages
      */
     public function testFilterMessages($sourceMessages, $filteredMessagesExpected)
     {
@@ -47,7 +47,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testerrorCountThresholdDataProvider
+     * @dataProvider dataProviderErrorCountThreshold
      */
     public function testerrorCountThreshold($messages, $threshold, $filteredMessagesExpected)
     {
@@ -62,7 +62,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testIgnoreWarningsDataProvider
+     * @dataProvider dataProviderIgnoreWarnings
      */
     public function testIgnoreWarnings($messages, $filteredMessagesExpected)
     {
@@ -77,7 +77,7 @@ class DefaultMessageFilterTest extends TestCase
     }
 
     /**
-     * @dataProvider testIgnoredErrorsDataProvider
+     * @dataProvider dataProviderIgnoredErrors
      */
     public function testIgnoredErrors($messages, $ignoredErrors, $filteredMessagesExpected)
     {
@@ -133,7 +133,7 @@ class DefaultMessageFilterTest extends TestCase
         $this->filter->filterMessages(array($error));
     }
 
-    public function testerrorCountThresholdDataProvider()
+    public function dataProviderErrorCountThreshold()
     {
         return array(
             array(
@@ -203,7 +203,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function testFilterMessagesDataProvider()
+    public function dataProviderFilterMessages()
     {
         return array(
             array(
@@ -259,7 +259,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function testIgnoreWarningsDataProvider()
+    public function dataProviderIgnoreWarnings()
     {
         return array(
             array(
@@ -317,7 +317,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function testIgnoredErrorsDataProvider()
+    public function dataProviderIgnoredErrors()
     {
         return array(
             array(

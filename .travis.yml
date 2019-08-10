@@ -37,9 +37,12 @@ matrix:
             env:
                 - ANALYZE=false
 before_script:
+    - export COMPOSER_MEMORY_LIMIT=-1
     - composer update
 script:
-    - vendor/bin/phpunit
+    - vendor/bin/phpunit --version
+    - vendor/bin/phpunit tests
+    - vendor/bin/php-cs-fixer --version
     - vendor/bin/php-cs-fixer fix --dry-run --verbose
     - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
     - if [ "$ANALYZE" = "true" ]; then export PATH=~/.config/composer/vendor/bin:$PATH; fi;

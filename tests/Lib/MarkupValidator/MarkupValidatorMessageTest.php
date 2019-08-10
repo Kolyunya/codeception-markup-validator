@@ -4,7 +4,7 @@ namespace Kolyunya\Codeception\Tests\Lib\MarkupValidator;
 
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessage;
 use Kolyunya\Codeception\Lib\MarkupValidator\MarkupValidatorMessageInterface;
-use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Tests\Base\TestCase;
 
 class MarkupValidatorMessageTest extends TestCase
 {
@@ -38,7 +38,7 @@ class MarkupValidatorMessageTest extends TestCase
     }
 
     /**
-     * @dataProvider testCustomInitializationDataProvider
+     * @dataProvider dataProviderCustomInitialization
      */
     public function testCustomInitialization($type, $summary, $details, $markup, $firstLineNumber, $lastLineNumber)
     {
@@ -64,7 +64,7 @@ class MarkupValidatorMessageTest extends TestCase
     }
 
     /**
-     * @dataProvider testToStringDataProvider
+     * @dataProvider dataProviderToString
      */
     public function testToString($type, $summary, $details, $firstLineNumber, $lastLineNumber, $markup, $string)
     {
@@ -80,7 +80,7 @@ class MarkupValidatorMessageTest extends TestCase
         $this->assertEquals($string, $messageString);
     }
 
-    public function testCustomInitializationDataProvider()
+    public function dataProviderCustomInitialization()
     {
         return array(
             array(
@@ -110,7 +110,7 @@ class MarkupValidatorMessageTest extends TestCase
         );
     }
 
-    public function testToStringDataProvider()
+    public function dataProviderToString()
     {
         return array(
             array(

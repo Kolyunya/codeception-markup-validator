@@ -6,7 +6,7 @@ use Codeception\Lib\ModuleContainer;
 use Exception;
 use Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter;
 use Kolyunya\Codeception\Module\MarkupValidator;
-use PHPUnit\Framework\TestCase;
+use Kolyunya\Codeception\Tests\Base\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 class MarkupValidatorTest extends TestCase
@@ -133,10 +133,14 @@ class MarkupValidatorTest extends TestCase
                 'class' => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMessageFilter',
             ),
         ));
+
+        // This is a hack to suppress the `risky test` warning.
+        // Replace with the `$this->expectNotToPerformAssertions();` for PHPUnit v6+.
+        $this->assertTrue(true);
     }
 
     /**
-     * @dataProvider testValidateMarkupDataProvider
+     * @dataProvider dataProviderValidateMarkup
      */
     public function testValidateMarkup($markup, $valid)
     {
@@ -163,7 +167,7 @@ class MarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testOverrideFilterConfigurationWarningsDataProvdier
+     * @dataProvider dataProviderOverrideFilterConfigurationWarnings
      */
     public function testOverrideFilterConfigurationWarnings($markup)
     {
@@ -182,7 +186,7 @@ class MarkupValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider testOverrideFilterConfigurationErrorsDataProvdier
+     * @dataProvider dataProviderOverrideFilterConfigurationErrors
      */
     public function testOverrideFilterConfigurationErrors($markup, array $ignoredErrors)
     {
@@ -199,7 +203,7 @@ class MarkupValidatorTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testValidateMarkupDataProvider()
+    public function dataProviderValidateMarkup()
     {
         return array(
             array(
@@ -267,7 +271,7 @@ HTML
         );
     }
 
-    public function testOverrideFilterConfigurationWarningsDataProvdier()
+    public function dataProviderOverrideFilterConfigurationWarnings()
     {
         return array(
             array(
@@ -292,7 +296,7 @@ HTML
         );
     }
 
-    public function testOverrideFilterConfigurationErrorsDataProvdier()
+    public function dataProviderOverrideFilterConfigurationErrors()
     {
         return array(
             array(
