@@ -22,8 +22,8 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4 <8.0",
-        "codeception/codeception": "^2.0 || ^3.0",
-        "phpunit/phpunit": ">=4.0 <8.0"
+        "codeception/codeception": "^2.0 || ^3.0 || ^4.0",
+        "phpunit/phpunit": ">=4.0 <9.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",
