@@ -1,27 +1,11 @@
 dist: xenial
 language: php
-env:
-    - ANALYZE=true
 matrix:
     include:
         -
-            php: '5.4'
-            dist: trusty
-            env:
-                - ANALYZE=false
-        -
-            php: '5.5'
-            dist: trusty
-            env:
-                - ANALYZE=false
-        -
             php: '5.6'
-            env:
-                - ANALYZE=false
         -
             php: '7.0'
-            env:
-                - ANALYZE=false
         -
             php: '7.1'
         -
@@ -30,30 +14,23 @@ matrix:
             php: '7.3'
         -
             php: '7.4'
-    # https://github.com/travis-ci/travis-ci/issues/6339
-    # https://github.com/travis-ci/travis-ci/issues/8912
-    allow_failures:
-        -
-            php: '5.4'
             env:
-                - ANALYZE=false
-        -
-            php: '5.5'
-            env:
-                - ANALYZE=false
+                - ANALYZE=true
+                - TEST_COVERAGE=true
+
 before_script:
     - export COMPOSER_MEMORY_LIMIT=-1
     - composer self-update
     - composer update
 script:
     - vendor/bin/phpunit --version
-    - vendor/bin/phpunit tests
+    - vendor/bin/phpunit
     - vendor/bin/php-cs-fixer --version
-    - vendor/bin/php-cs-fixer fix --dry-run --verbose
+    - vendor/bin/php-cs-fixer fix --dry-run
     - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
     - if [ "$ANALYZE" = "true" ]; then export PATH=~/.config/composer/vendor/bin:$PATH; fi;
     - if [ "$ANALYZE" = "true" ]; then phpstan --version; fi;
-    - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources --level=5; fi;
-    - if [ "$ANALYZE" = "true" ]; then phpstan analyze tests --level=1; fi;
+    - if [ "$ANALYZE" = "true" ]; then phpstan analyze --configuration=.phpstan-sources.neon; fi;
+    - if [ "$ANALYZE" = "true" ]; then phpstan analyze --configuration=.phpstan-tests.neon; fi;
 after_success:
-    - travis_retry vendor/bin/coveralls
+    - if [ "$TEST_COVERAGE" = "true" ]; then vendor/bin/php-coveralls; fi;
