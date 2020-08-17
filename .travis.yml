@@ -1,13 +1,17 @@
-dist: trusty
+dist: xenial
 language: php
+env:
+    - ANALYZE=true
 matrix:
     include:
         -
             php: '5.4'
+            dist: trusty
             env:
                 - ANALYZE=false
         -
             php: '5.5'
+            dist: trusty
             env:
                 - ANALYZE=false
         -
@@ -20,24 +24,26 @@ matrix:
                 - ANALYZE=false
         -
             php: '7.1'
-            env:
-                - ANALYZE=true
         -
             php: '7.2'
-            env:
-                - ANALYZE=true
         -
             php: '7.3'
-            env:
-                - ANALYZE=true
+        -
+            php: '7.4'
+    # https://github.com/travis-ci/travis-ci/issues/6339
+    # https://github.com/travis-ci/travis-ci/issues/8912
     allow_failures:
-        # https://github.com/travis-ci/travis-ci/issues/6339
         -
             php: '5.4'
             env:
                 - ANALYZE=false
+        -
+            php: '5.5'
+            env:
+                - ANALYZE=false
 before_script:
     - export COMPOSER_MEMORY_LIMIT=-1
+    - composer self-update
     - composer update
 script:
     - vendor/bin/phpunit --version
@@ -47,7 +53,7 @@ script:
     - if [ "$ANALYZE" = "true" ]; then composer global require phpstan/phpstan; fi;
     - if [ "$ANALYZE" = "true" ]; then export PATH=~/.config/composer/vendor/bin:$PATH; fi;
     - if [ "$ANALYZE" = "true" ]; then phpstan --version; fi;
-    - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources --configuration=phpstan-sources.neon --level=5; fi;
-    - if [ "$ANALYZE" = "true" ]; then phpstan analyze tests --configuration=phpstan-tests.neon --level=1; fi;
+    - if [ "$ANALYZE" = "true" ]; then phpstan analyze sources --level=5; fi;
+    - if [ "$ANALYZE" = "true" ]; then phpstan analyze tests --level=1; fi;
 after_success:
     - travis_retry vendor/bin/coveralls
