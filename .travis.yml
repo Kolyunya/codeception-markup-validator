@@ -17,6 +17,8 @@ matrix:
             env:
                 - ANALYZE=true
                 - TEST_COVERAGE=true
+        -
+            php: 'nightly'
 
 before_script:
     - export COMPOSER_MEMORY_LIMIT=-1
