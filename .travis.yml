@@ -19,11 +19,16 @@ matrix:
                 - TEST_COVERAGE=true
         -
             php: 'nightly'
-
+            env:
+                - IGNORE_REQUIREMENTS=true
+    allow_failures:
+        -
+            php: 'nightly'
 before_script:
     - export COMPOSER_MEMORY_LIMIT=-1
     - composer self-update
-    - composer update
+    - if [ "$IGNORE_REQUIREMENTS" != "true" ]; then composer update; fi;
+    - if [ "$IGNORE_REQUIREMENTS" = "true" ]; then composer update --ignore-platform-reqs; fi;
 script:
     - vendor/bin/phpunit --version
     - vendor/bin/phpunit
