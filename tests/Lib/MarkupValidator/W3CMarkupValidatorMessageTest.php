@@ -11,14 +11,14 @@ class W3CMarkupValidatorMessageTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
     }
 
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -37,7 +37,7 @@ class W3CMarkupValidatorMessageTest extends TestCase
         $this->assertEquals($message->getMarkup(), $markup);
     }
 
-    public function dataProviderConstructor()
+    public static function dataProviderConstructor()
     {
         return array(
             array(

@@ -11,14 +11,14 @@ class MarkupValidatorMessageTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
     }
 
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -80,7 +80,7 @@ class MarkupValidatorMessageTest extends TestCase
         $this->assertEquals($string, $messageString);
     }
 
-    public function dataProviderCustomInitialization()
+    public static function dataProviderCustomInitialization()
     {
         return array(
             array(
@@ -110,7 +110,7 @@ class MarkupValidatorMessageTest extends TestCase
         );
     }
 
-    public function dataProviderToString()
+    public static function dataProviderToString()
     {
         return array(
             array(

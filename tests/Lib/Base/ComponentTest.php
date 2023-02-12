@@ -14,14 +14,14 @@ class ComponentTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
     }
 
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -33,7 +33,7 @@ class ComponentTest extends TestCase
         $this->assertEquals($classNameActual, $classNameExpected);
     }
 
-    public function dataProviderGetClassName()
+    public static function dataProviderGetClassName()
     {
         return array(
             array(

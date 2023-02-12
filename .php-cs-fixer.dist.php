@@ -10,7 +10,7 @@ $finder = Finder::create()
     ->files()
 ;
 
-$config = Config::create()
+$config = (new Config())
     ->setRules(array(
         '@PSR1' => true,
         '@PSR2' => true,
@@ -19,7 +19,7 @@ $config = Config::create()
         ),
         'no_trailing_whitespace' => true,
         'ordered_imports' => array(
-            'importsOrder' => null,
+            'imports_order' => null,
         ),
         'single_blank_line_at_eof' => true,
         'strict_param' => true,

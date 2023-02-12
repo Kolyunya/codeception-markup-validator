@@ -32,7 +32,7 @@ class MarkupValidator extends Module
     /**
      * {@inheritDoc}
      */
-    protected $config = array(
+    protected array $config = array(
         self::PROVIDER_CONFIG_KEY => array(
             self::COMPONENT_CLASS_CONFIG_KEY => 'Kolyunya\Codeception\Lib\MarkupValidator\DefaultMarkupProvider',
         ),

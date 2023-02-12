@@ -16,7 +16,7 @@ class W3CMarkupValidatorTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->validator = new W3CMarkupValidator();
     }
@@ -24,7 +24,7 @@ class W3CMarkupValidatorTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -45,7 +45,7 @@ class W3CMarkupValidatorTest extends TestCase
             $this->assertEquals($message->getDetails(), $messageData['details']);
             $this->assertEquals($message->getFirstLineNumber(), $messageData['firstLineNumber']);
             $this->assertEquals($message->getLastLineNumber(), $messageData['lastLineNumber']);
-            $this->assertContains($messageData['markup'], $message->getMarkup());
+            $this->assertStringContainsString($messageData['markup'], $message->getMarkup());
         }
     }
 
@@ -60,7 +60,7 @@ class W3CMarkupValidatorTest extends TestCase
         $this->validator->validate('<html></html>');
     }
 
-    public function dataProviderValidateMarkup()
+    public static function dataProviderValidateMarkup()
     {
         return array(
             array(

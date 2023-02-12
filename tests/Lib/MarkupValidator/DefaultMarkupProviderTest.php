@@ -22,15 +22,11 @@ class DefaultMarkupProviderTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->moduleContainer = $this
             ->getMockBuilder('Codeception\Lib\ModuleContainer')
             ->disableOriginalConstructor()
-            ->setMethods(array(
-                'hasModule',
-                'getModule',
-            ))
             ->getMock()
         ;
 
@@ -40,7 +36,7 @@ class DefaultMarkupProviderTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -66,9 +62,9 @@ HTML
         ;
 
         $phpBrowser = $this
-            ->getMockBuilder('Codeception\Module\PhpBrowser')
+            ->getMockBuilder('Codeception\Module')
             ->disableOriginalConstructor()
-            ->setMethods(array(
+            ->addMethods(array(
                 '_getResponseContent',
             ))
             ->getMock()
@@ -95,7 +91,7 @@ HTML
         $this->assertEquals($expectedMarkup, $actualMarkup);
     }
 
-    public function testWithWebDrive()
+    public function testWithWebDriver()
     {
         $expectedMarkup =
             <<<HTML
@@ -111,10 +107,10 @@ HTML
         ;
 
         $remoteWebDriver = $this
-            ->getMockBuilder('Facebook\WebDriver\Remote\RemoteWebDriver')
+            ->getMockBuilder('Codeception\Module')
             ->disableOriginalConstructor()
-            ->setMethods(array(
-                'getPageSource'
+            ->addMethods(array(
+                'getPageSource',
             ))
             ->getMock()
         ;
@@ -124,7 +120,7 @@ HTML
         ;
 
         $webDriver = $this
-            ->getMockBuilder('Codeception\Module\WebDriver')
+            ->getMockBuilder('Codeception\Module')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -133,6 +129,7 @@ HTML
         $this->moduleContainer
             ->method('hasModule')
             ->will($this->returnValueMap(array(
+                array('PhpBrowser', false),
                 array('WebDriver', true)
             )))
         ;

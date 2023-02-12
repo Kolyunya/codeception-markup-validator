@@ -2,3 +2,5 @@ parameters:
     level: 1
     paths:
         - "tests"
+    ignoreErrors:
+        - '#Call to an undefined method Kolyunya\\Codeception\\Tests\\Lib\\MarkupValidator\\DefaultMessageFilterTest::assertArraySubset#'

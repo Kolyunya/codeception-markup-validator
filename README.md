@@ -2,10 +2,8 @@
 [![Latest Stable Version](https://poser.pugx.org/kolyunya/codeception-markup-validator/v/stable)](https://packagist.org/packages/kolyunya/codeception-markup-validator)
 [![Build Status](https://travis-ci.org/Kolyunya/codeception-markup-validator.svg?branch=master)](https://travis-ci.org/Kolyunya/codeception-markup-validator)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
-[![Coverage Status](https://coveralls.io/repos/github/Kolyunya/codeception-markup-validator/badge.svg?branch=master)](https://coveralls.io/github/Kolyunya/codeception-markup-validator?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Kolyunya/codeception-markup-validator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Kolyunya/codeception-markup-validator/?branch=master)
 [![Code Climate](https://codeclimate.com/github/Kolyunya/codeception-markup-validator/badges/gpa.svg)](https://codeclimate.com/github/Kolyunya/codeception-markup-validator)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/c7566433-052d-41f1-ab34-857f4650a18a/mini.png)](https://insight.sensiolabs.com/projects/c7566433-052d-41f1-ab34-857f4650a18a)
 
 ## Problem
 Programmatically validate markup of web application pages during automated acceptance testing.
