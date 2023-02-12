@@ -1,6 +1,6 @@
 # Codeception Markup Validator
 [![Latest Stable Version](https://poser.pugx.org/kolyunya/codeception-markup-validator/v/stable)](https://packagist.org/packages/kolyunya/codeception-markup-validator)
-[![Build Status](https://travis-ci.org/Kolyunya/codeception-markup-validator.svg?branch=master)](https://travis-ci.org/Kolyunya/codeception-markup-validator)
+[![Build Status](https://github.com/Kolyunya/codeception-markup-validator/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Kolyunya/codeception-markup-validator/actions/workflows/build.yml)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Kolyunya/codeception-markup-validator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Kolyunya/codeception-markup-validator/?branch=master)
 [![Code Climate](https://codeclimate.com/github/Kolyunya/codeception-markup-validator/badges/gpa.svg)](https://codeclimate.com/github/Kolyunya/codeception-markup-validator)
