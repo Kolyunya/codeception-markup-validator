@@ -17,7 +17,7 @@ class DefaultMessagePrinterTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->printer = new DefaultMessagePrinter();
     }
@@ -25,7 +25,7 @@ class DefaultMessagePrinterTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -47,7 +47,7 @@ class DefaultMessagePrinterTest extends TestCase
         $this->assertEquals($stringExpected, $stringActual);
     }
 
-    public function dataProviderGetMessageString()
+    public static function dataProviderGetMessageString()
     {
         return array(
             array(
@@ -105,7 +105,7 @@ TXT
         );
     }
 
-    public function dataProviderGetMessagesString()
+    public static function dataProviderGetMessagesString()
     {
         return array(
             array(

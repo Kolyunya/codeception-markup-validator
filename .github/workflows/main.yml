@@ -1,0 +1,50 @@
+name: main
+
+on:
+    push:
+        branches: [ 'master' ]
+    pull_request:
+        branches: [ 'master' ]
+
+permissions:
+    contents: read
+
+jobs:
+
+    test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php-version:
+                    - '8.1'
+                    - '8.2'
+                    - 'latest'
+        steps:
+            -
+                uses: actions/checkout@v3
+            -
+                name: Validate composer
+                run: docker run --volume $PWD:/sources --workdir /sources composer composer validate --strict
+            -
+                name: Install dependencies
+                run: docker run --volume $PWD:/sources --workdir /sources composer composer update
+            -
+                name: Validate style
+                run: >
+                    docker run --volume $PWD:/sources --workdir /sources --env PHP_CS_FIXER_IGNORE_ENV=TRUE php:${{ matrix.php-version }}
+                    vendor/bin/php-cs-fixer fix --dry-run
+            -
+                name: Analyze sources
+                run: >
+                    docker run --volume $PWD:/sources --workdir /sources php:${{ matrix.php-version }}
+                    vendor/bin/phpstan analyze --configuration=.phpstan-sources.neon
+            -
+                name: Analyze tests
+                run: >
+                    docker run --volume $PWD:/sources --workdir /sources php:${{ matrix.php-version }}
+                    vendor/bin/phpstan analyze --configuration=.phpstan-tests.neon
+            -
+                name: Run tests
+                run: >
+                    docker run --volume $PWD:/sources --workdir /sources php:${{ matrix.php-version }}
+                    vendor/bin/phpunit

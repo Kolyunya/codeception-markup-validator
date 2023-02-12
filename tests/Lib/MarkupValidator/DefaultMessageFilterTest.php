@@ -18,7 +18,7 @@ class DefaultMessageFilterTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->filter = new DefaultMessageFilter();
     }
@@ -26,7 +26,7 @@ class DefaultMessageFilterTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -133,7 +133,7 @@ class DefaultMessageFilterTest extends TestCase
         $this->filter->filterMessages(array($error));
     }
 
-    public function dataProviderErrorCountThreshold()
+    public static function dataProviderErrorCountThreshold()
     {
         return array(
             array(
@@ -203,7 +203,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function dataProviderFilterMessages()
+    public static function dataProviderFilterMessages()
     {
         return array(
             array(
@@ -259,7 +259,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function dataProviderIgnoreWarnings()
+    public static function dataProviderIgnoreWarnings()
     {
         return array(
             array(
@@ -317,7 +317,7 @@ class DefaultMessageFilterTest extends TestCase
         );
     }
 
-    public function dataProviderIgnoredErrors()
+    public static function dataProviderIgnoredErrors()
     {
         return array(
             array(

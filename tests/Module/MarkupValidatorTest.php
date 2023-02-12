@@ -24,15 +24,11 @@ class MarkupValidatorTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->moduleContainer = $this
             ->getMockBuilder('Codeception\Lib\ModuleContainer')
             ->disableOriginalConstructor()
-            ->setMethods(array(
-                'hasModule',
-                'getModule',
-            ))
             ->getMock()
         ;
 
@@ -51,7 +47,7 @@ class MarkupValidatorTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -203,7 +199,7 @@ class MarkupValidatorTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function dataProviderValidateMarkup()
+    public static function dataProviderValidateMarkup()
     {
         return array(
             array(
@@ -271,7 +267,7 @@ HTML
         );
     }
 
-    public function dataProviderOverrideFilterConfigurationWarnings()
+    public static function dataProviderOverrideFilterConfigurationWarnings()
     {
         return array(
             array(
@@ -296,7 +292,7 @@ HTML
         );
     }
 
-    public function dataProviderOverrideFilterConfigurationErrors()
+    public static function dataProviderOverrideFilterConfigurationErrors()
     {
         return array(
             array(
@@ -318,9 +314,9 @@ HTML
     private function mockMarkup($markup)
     {
         $phpBrowser = $this
-            ->getMockBuilder('Codeception\Module\PhpBrowser')
+            ->getMockBuilder('Codeception\Module')
             ->disableOriginalConstructor()
-            ->setMethods(array(
+            ->addMethods(array(
                 '_getResponseContent',
             ))
             ->getMock()
